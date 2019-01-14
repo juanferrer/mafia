@@ -1,0 +1,14 @@
+body {
+	margin: 0;
+	background-color: aliceblue;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
+}
+
+.content-area {
+	width: 95vw;
+	height: 95vh;
+	background-color: blue;
+}
