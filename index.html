@@ -24,7 +24,40 @@
 
 <body>
 	<div class="content-area">
-
+		<div class="title" id="title">Mafia</div>
+		<hr>
+		<div class="button-area">
+			<div class="button-pair">
+				<button class="game-button" id="new-game-button">NEW GAME</button>
+				<button class="game-button" id="join-game-button">JOIN GAME</button>
+			</div>
+		</div>
+		<div class="new-game-area">
+			<input type="text" name="new-game-player-name" value="" placeholder="Enter your name">
+			<div class="button-pair">
+				<button class="game-button" id="new-game-button">CREATE</button>
+				<button class="game-button back-button">BACK</button>
+			</div>
+		</div>
+		<div class="join-game-area">
+			<input type="text" name="join-game-id" value="" placeholder="Enter access code">
+			<input type="text" name="join-game-player-name" value="" placeholder="Enter your name">
+			<div class="button-pair">
+				<button class="game-button" id="new-game-button">CREATE</button>
+				<button class="game-button back-button">BACK</button>
+			</div>
+		</div>
+		<hr>
+		<div class="language-select-container">
+			<select id="language-select">
+				<option value="en">English</option>
+				<option value="es">Español</option>
+				<option value="ru">Русский</option>
+			</select>
+		</div>
+		<div class="small-links">
+			<a href="https://github.com/juanferrer/mafia">https://github.com/juanferrer/mafia</a>
+		</div>
 	</div>
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
