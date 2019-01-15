@@ -10,12 +10,13 @@ define('DB_PASSWORD', '%h$4Cb1LlXhj');
 //region Base logic
 
 $gameID = $_POST['gameID'];
-$playerID = $_POST['playerID'];
+$playerIName = $_POST['playerName'];
+$playerID = randomString(11);
 $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
-        joinGame($gameID, $playerID);
+        joinGame($gameID, $playerID, $playerName);
         break;
     case 'LEAVE':
         leaveGame($gameID, $playerID);
@@ -37,7 +38,7 @@ switch (strtoupper($requestType)) {
 
 // Join the game with the specified ID or create a new one and return a new gameID
 // gameID is a string of 3 alphanumeric caracters
-function joinGame($gameID, $playerID)
+function joinGame($gameID, $playerID, $playerName)
 {
     $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
     if (!$gameID) {

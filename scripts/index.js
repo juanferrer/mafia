@@ -2,7 +2,6 @@
 
 // Server sent events: https://www.w3schools.com/html/html5_serversentevents.asp
 
-let playerID = randomString();
 let gameID = "";
 
 let debug = {};
@@ -33,10 +32,10 @@ function randomString(length = 11) {
 }
 
 
-function newGame() {
+function newGame(playerName) {
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
-		data: { "gameID": "", "playerID": playerID, "type": "JOIN" },
+		data: { "gameID": "", "playerName": playerName, "type": "JOIN" },
 		error: (request, status, error) => {
 			debug.log("Request: " + request);
 			debug.log("Status: " + status);
@@ -59,12 +58,12 @@ $("#language-select").change(function () {
 	doI18N(this.value);
 });
 
-$("#new-game-button").click(() => {
+$("#start-new-game-button").click(() => {
 	$(".new-game-area").css("display", "flex");
 	$(".button-area").css("display", "none");
 });
 
-$("#join-game-button").click(() => {
+$("#start-join-game-button").click(() => {
 	$(".join-game-area").css("display", "flex");
 	$(".button-area").css("display", "none");
 });
@@ -73,6 +72,15 @@ $(".back-button").click(() => {
 	$(".button-area").css("display", "flex");
 	$(".new-game-area").css("display", "none");
 	$(".join-game-area").css("display", "none");
+});
+
+$("#new-game-button").click(() => {
+	let playerName = $("input[name='new-game-player-name'").val();
+	newGame(playerName);
+});
+
+$("#join-game-button").click(() => {
+	joinGame();
 });
 
 // Cache whatever language the user selected
