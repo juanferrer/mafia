@@ -5,6 +5,7 @@
 let gameID = "";
 let isGM = false;
 let languageCode = "en";
+let refreshTime = 2000;
 
 let debug = {
 	dev: true,
@@ -46,9 +47,26 @@ function joinGame(gameID, playerName) {
 /**
  * Main function. It deals with changes in the server DB
  */
-function updateGameState() {
+function updateGameState(data, status) {
+	debug.log("Data: " + data);
+	debug.log("Status: " + status);
 
-	setTimeout(updateGameState, 2);
+	// And request update again
+	setTimeout(requestGameStateUpdate, refreshTime);
+}
+
+function requestGameStateUpdate() {
+
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "type": "REFRESH" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: updateGameState
+	});
 }
 
 /**
@@ -81,7 +99,7 @@ function goToLobby(data, status, request) {
 	$(".join-game-area").css("display", "none");
 	$(".lobby-area").css("display", "flex");
 
-	setTimeout(updateGameState, 2);
+	setTimeout(requestGameStateUpdate, refreshTime);
 }
 
 /** Using function to have access to this */

@@ -12,34 +12,42 @@ define('SLEEP_TIME', 5);
 //region Base logic
 
 // Handle no parameters
-if (!isset($_POST['gameID']) || !isset($_POST['playerName']) || $_POST['playerName'] == '' || !isset($_POST['type']) || $_POST['type'] == '') {
+if (!isset($_POST['type']) || $_POST['type'] == '') {
     http_response_code(400);
     die('ERROR|MISSING PARAMETERS');
 }
 
 // TODO: Sanitise user input
 
-$gameID = $_POST['gameID'];
-$playerName = $_POST['playerName'];
-$playerID = randomString(11);
 $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
+        $playerID = randomString(11);
         // Join the current game or create one if none exists
         joinGame($gameID, $playerID, $playerName);
         break;
     case 'LEAVE':
         // Leave the current game
-        leaveGame($gameID, $playerID);
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
+        leaveGame($gameID, $playerName);
         break;
     case 'REFRESH':
         // Get the updated game state
+        $gameID = $_POST['gameID'];
         refreshGameState($gameID);
         break;
-    case 'DELEGATE':
-        // Change the GM
-        changeGM($gameID, $playerID);
+    case 'CHANGE':
+        // Make changes to data
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
+        $varToChange = $_POST['varToChange'];
+        $newValue = $_POST['newValue'];
+
+        changeGameData($gameID, $variable, $newValue);
         break;
     default:
         http_response_code(400);
@@ -59,7 +67,7 @@ function joinGame($gameID, $playerID, $playerName)
     if ($mysqli->connect_error) {
         // Unable to connect to DB
         http_reponse_code(500);
-        die('ERROR|UNABLE TO CONNECT|' . $mysqli->connect_error);
+        die('ERROR|UNABLE TO CONNECT');
     }
 
     if (!$gameID) {
@@ -78,9 +86,9 @@ function joinGame($gameID, $playerID, $playerName)
         $gameData = json_encode(['data' => '']);
         if ($result = $mysqli->query('INSERT INTO games VALUES (\'' . $gameID . '\', \'' . $playersData . '\', \'' . $gameData . '\', \'' . $playerID . '\')')) {
             // Now, send new gameID back to the host player
-            echo 'SUCCESS|' . $gameID;
+            exit('SUCCESS|' . $gameID);
         } else {
-            echo 'ERROR|GAME NOT CREATED';
+            die('ERROR|GAME NOT CREATED');
         }
 
     } else {
@@ -89,8 +97,8 @@ function joinGame($gameID, $playerID, $playerName)
         $result = $mysqli->query('SELECT players FROM games WHERE gameID = \'' . $gameID . '\'');
 
         if ($result->num_rows <= 0) {
-            // Wait, there is no game with such ID
-            echo 'ERROR|GAME NOT FOUND';
+            // Wait, there is no game with that ID
+            die('ERROR|GAME NOT FOUND');
         }
 
         // There should be only one game with this ID, so join first one with matched ID
@@ -102,7 +110,7 @@ function joinGame($gameID, $playerID, $playerName)
 
         if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
             // Signal the client that the game is ready
-            die('SUCCESS|PLAYER');
+            exit('SUCCESS|PLAYER');
         } else {
             die('ERROR|NOT JOINED GAME');
         }
@@ -110,30 +118,48 @@ function joinGame($gameID, $playerID, $playerName)
 
     // Now store the gameID in $_SESSION, so that we stay connected until the browser is closed
     $_SESSION['gameID'] = $gameID;
+    $_SESSION['playerID'] = $playerID;
+    $_SESSION['playerName'] = $playerName;
 }
 
 //
-function leaveGame($gameID, $playerID)
+function leaveGame($gameID, $playerName)
 {
     // If $gameID empty, ignore
 
     // Otherwise, leave game
     // Last player to leave the game also deletes the entry
     http_response_code(501);
-    echo 'ERROR|NOT IMPLEMENTED';
+    die('ERROR|NOT IMPLEMENTED');
 }
 
 // Refresh
 function refreshGameState($gameID)
 {
-    http_response_code(501);
-    echo 'ERROR|NOT IMPLEMENTED';
+    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    if ($mysqli->connect_error) {
+        // Unable to connect to DB
+        http_reponse_code(500);
+        die('ERROR|UNABLE TO CONNECT');
+    }
+
+    $result = $mysqli->query('SELECT gameData, players FROM games WHERE gameID = \'' . $gameID . '\'');
+
+    if ($result->num_rows <= 0) {
+        // No data retrieved
+        die('ERROR|GAME NOT FOUND');
+    }
+    $gameData = $result->fetch_assoc();
+    $players = $result->fetch_assoc();
+    $result->close();
+
+    exit('SUCCESS|' . json_encode($gameData) . '|' . json_encode($players));
 }
 
-function changeGM($gameID, $playerID)
+function changeGameData($gameID, $variable, $value)
 {
-    http_response_code(501);
-    echo 'ERROR|NOT IMPLEMENTED';
+
 }
 
 //endregion
