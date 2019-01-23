@@ -31,7 +31,7 @@ function randomString(length = 11) {
 	return str;
 }
 
-
+/** */
 function newGame(playerName) {
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
@@ -45,12 +45,34 @@ function newGame(playerName) {
 			debug.log("Data: " + data);
 			debug.log("Status: " + status);
 			debug.log("Request: " + request);
+
+			if (data.split("|")[0] === "SUCCESS") {
+				gameID = data.split("|")[1];
+			}
 		}
 	});
 }
 
-function joinGame() {
+/** */
+function joinGame(gameID, playerName) {
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: (data, status, request) => {
+			debug.log("Data: " + data);
+			debug.log("Status: " + status);
+			debug.log("Request: " + request);
 
+			if (data.split("|")[0] === "SUCCESS") {
+				gameID = data.split("|")[1];
+			}
+		}
+	});
 }
 
 /** Using function to have access to this */
@@ -80,7 +102,9 @@ $("#new-game-button").click(() => {
 });
 
 $("#join-game-button").click(() => {
-	joinGame();
+	let gameID = $("input[name='join-game-id'").val();
+	let playerName = $("input[name='join-game-player-name'").val();
+	joinGame(gameID, playerName);
 });
 
 // Cache whatever language the user selected

@@ -9,8 +9,16 @@ define('DB_PASSWORD', '%h$4Cb1LlXhj');
 
 //region Base logic
 
+// Handle no parameters
+if (!isset($_POST['gameID']) || !isset($_POST['playerName']) || $_POST['playerName'] == '' || !isset($_POST['type']) || $_POST['type'] == '') {
+    http_response_code(400);
+    die('ERROR|MISSING PARAMETERS');
+}
+
+// TODO: Sanitise user input
+
 $gameID = $_POST['gameID'];
-$playerIName = $_POST['playerName'];
+$playerName = $_POST['playerName'];
 $playerID = randomString(11);
 $requestType = $_POST['type'];
 
@@ -41,6 +49,13 @@ switch (strtoupper($requestType)) {
 function joinGame($gameID, $playerID, $playerName)
 {
     $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    if ($mysqli->connect_error) {
+        // Unable to connect to DB
+        http_reponse_code(500);
+        die('ERROR|UNABLE TO CONNECT|' . $mysqli->connect_error);
+    }
+
     if (!$gameID) {
         // If $gameID empty, create new game
         $gameID = newGameID();
@@ -53,12 +68,15 @@ function joinGame($gameID, $playerID, $playerName)
         } while ($result);
 
         // First player in a game becomes the GM
-        $playersData = json_encode(['players' => array($playerID)]);
+        $playersData = json_encode(['players' => array('playerID' => $playerID, 'playerName' => $playerName)]);
         $gameData = json_encode(['data' => '']);
-        $result = $mysqli->query('INSERT INTO games VALUES (' . $gameID . ', ' . $playersData . ', ' . $gameData . ', ' . $playerID . ')');
+        if ($result = $mysqli->query('INSERT INTO games VALUES (\'' . $gameID . '\', \'' . $playersData . '\', \'' . $gameData . '\', \'' . $playerID . '\')')) {
+            // Now, send new gameID back to the player
+            echo 'SUCCESS|' . $gameID;
+        } else {
+            echo 'ERROR|GAME NOT CREATED';
+        }
 
-        // Now, send new gameID back to the player
-        echo 'SUCCESS|' . $gameID;
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
@@ -71,9 +89,9 @@ function joinGame($gameID, $playerID, $playerName)
 
         // Add this playerID to the players array, and insert back into the entry
         $players = json_decode($result, true);
-        array_push($players['players'], $playerID);
+        array_push($players['players'], array('playerID' => $playerID, 'playerName' => $playerName));
         $playersData = json_encode($players);
-        $result = $mysqli->query('INSERT INTO games (players) VALUE ' . $playersData . ' WHERE gameID = ' . $gameID);
+        $result = $mysqli->query('UPDATE games (players) VALUE ' . $playersData . ' WHERE gameID = ' . $gameID);
 
         // Signal the client that the game is ready
         echo 'SUCCESS|' . $gameID;
@@ -87,17 +105,20 @@ function leaveGame($gameID, $playerID)
 
     // Otherwise, leave game
     // Last player to leave the game also deletes the entry
+    http_response_code(501);
     echo 'ERROR|NOT IMPLEMENTED';
 }
 
 // Refresh
 function refreshGameState($gameID)
 {
+    http_response_code(501);
     echo 'ERROR|NOT IMPLEMENTED';
 }
 
 function changeGM($gameID, $playerID)
 {
+    http_response_code(501);
     echo 'ERROR|NOT IMPLEMENTED';
 }
 
