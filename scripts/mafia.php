@@ -14,7 +14,7 @@ define('SLEEP_TIME', 5);
 // Handle no parameters
 if (!isset($_POST['type']) || $_POST['type'] == '') {
     http_response_code(400);
-    die('ERROR|MISSING PARAMETERS');
+    die('MISSING PARAMETERS');
 }
 
 // TODO: Sanitise user input
@@ -66,8 +66,8 @@ function joinGame($gameID, $playerID, $playerName)
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
-        http_reponse_code(500);
-        die('ERROR|UNABLE TO CONNECT');
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
     }
 
     if (!$gameID) {
@@ -86,9 +86,10 @@ function joinGame($gameID, $playerID, $playerName)
         $gameData = json_encode(['data' => '']);
         if ($result = $mysqli->query('INSERT INTO games VALUES (\'' . $gameID . '\', \'' . $playersData . '\', \'' . $gameData . '\', \'' . $playerID . '\')')) {
             // Now, send new gameID back to the host player
-            exit('SUCCESS|' . $gameID);
+            exit($gameID);
         } else {
-            die('ERROR|GAME NOT CREATED');
+            http_response_code(500);
+            die('GAME NOT CREATED');
         }
 
     } else {
@@ -98,7 +99,8 @@ function joinGame($gameID, $playerID, $playerName)
 
         if ($result->num_rows <= 0) {
             // Wait, there is no game with that ID
-            die('ERROR|GAME NOT FOUND');
+            http_response_code(404);
+            die('GAME NOT FOUND');
         }
 
         // There should be only one game with this ID, so join first one with matched ID
@@ -110,9 +112,10 @@ function joinGame($gameID, $playerID, $playerName)
 
         if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
             // Signal the client that the game is ready
-            exit('SUCCESS|PLAYER');
+            exit('PLAYER');
         } else {
-            die('ERROR|NOT JOINED GAME');
+            http_response_code(500);
+            die('NOT JOINED GAME');
         }
     }
 
@@ -126,11 +129,47 @@ function joinGame($gameID, $playerID, $playerName)
 function leaveGame($gameID, $playerName)
 {
     // If $gameID empty, ignore
-
+    if ($gameID == "") {
+        http_response_code(400);
+        die("GAME ID MISSING");
+    }
     // Otherwise, leave game
+    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    if ($mysqli->connect_error) {
+        // Unable to connect to DB
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
+    }
+
+    $result = $mysqli->query('SELECT players FROM games WHERE gameID = \'' . $gameID . '\'');
+
+    if ($result->num_rows <= 0) {
+        // Wait, there is no game with that ID
+        http_response_code(404);
+        die('GAME NOT FOUND');
+    }
+
+    // There should be only one game with this ID, so join first one with matched ID
+    $players = json_decode(($result->fetch_row())[0], true);
+    $result->close();
+    // Remove this playerID to the players array, and insert back into the entry
+    $newPlayers = array_filter($players['players'], function ($v) {
+        return $v['playerName'] != $playerName;
+    });
+    $playersData = json_encode($newPlayers);
+
+    if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+        // Signal the client that the game is ready
+        exit('DISCONNECTED');
+    } else {
+        http_response_code(500);
+        die('UNABLE TO LEAVE GAME');
+    }
+
     // Last player to leave the game also deletes the entry
     http_response_code(501);
-    die('ERROR|NOT IMPLEMENTED');
+    die('NOT IMPLEMENTED');
 }
 
 // Refresh
@@ -140,21 +179,21 @@ function refreshGameState($gameID)
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
-        http_reponse_code(500);
-        die('ERROR|UNABLE TO CONNECT');
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
     }
 
     $result = $mysqli->query('SELECT gameData, players FROM games WHERE gameID = \'' . $gameID . '\'');
 
     if ($result->num_rows <= 0) {
         // No data retrieved
-        die('ERROR|GAME NOT FOUND');
+        http_response_code(404);
+        die('GAME NOT FOUND');
     }
-    $gameData = $result->fetch_assoc();
-    $players = $result->fetch_assoc();
+    $data = $result->fetch_assoc();
     $result->close();
 
-    exit('SUCCESS|' . json_encode($gameData) . '|' . json_encode($players));
+    exit($data);
 }
 
 function changeGameData($gameID, $variable, $value)

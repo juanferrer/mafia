@@ -3,15 +3,23 @@
 // Server sent events: https://www.w3schools.com/html/html5_serversentevents.asp
 
 let gameID = "";
+let playerName = "";
 let isGM = false;
 let languageCode = "en";
 let refreshTime = 2000;
+let refreshTimeout;
+let failedAttempts = 0;
+let players = new Set();
 
 let debug = {
 	dev: true,
 };
 debug.log = function (msg) {
-	if (debug.dev) console.log(msg); //eslint-disable-line no-console
+	if (debug.dev) console.log(msg); // eslint-disable-line no-console
+};
+
+debug.error = function (msg) {
+	if (debug.dev) console.error(msg); // eslint-disable-line no-console
 };
 
 /**
@@ -32,6 +40,9 @@ function doI18N(languageCode) {
  * @param {String} playerName
  */
 function joinGame(gameID, playerName) {
+
+	// TODO: Validate playerName (only alphanumeric characters)
+
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
 		data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
@@ -51,8 +62,40 @@ function updateGameState(data, status) {
 	debug.log("Data: " + data);
 	debug.log("Status: " + status);
 
-	// And request update again
-	setTimeout(requestGameStateUpdate, refreshTime);
+	if (status === 200) {
+		failedAttempts = 0;
+
+		let gameData = JSON.parse(data.split("|")[0]);
+		let newPlayers = JSON.parse(data.split("|")[1]);
+
+		// Now, do what is needed with the received data
+
+		// If the lobby is visible, we should add the players as soon as we see them
+		if ($("#lobby-area").css("display") !== "none") {
+			// Check what players are already there, and add the ones missing
+			// Get all the elements in newPlayers that are not in players
+			// That is, players that need to be added
+			/*var missingPlayers = (new Set(newPlayers).filter(item => {
+				return !players.has(item);
+			}));*/
+			$("#players-list").html("");
+
+			newPlayers.players.forEach(e => {
+				$("#players-list").append(`<span>${e.playerName}</span>`);
+			});
+		}
+
+		// And request update again
+		refreshTimeout = setTimeout(requestGameStateUpdate, refreshTime);
+	} else {
+		if (failedAttempts < 3) {
+			debug.log("Something went wrong. Retrying...");
+			setTimeout(requestGameStateUpdate, refreshTime);
+			failedAttempts++;
+		} else {
+			debug.error("Server not responding.");
+		}
+	}
 }
 
 function requestGameStateUpdate() {
@@ -80,12 +123,12 @@ function goToLobby(data, status, request) {
 	debug.log("Status: " + status);
 	debug.log("Request: " + request);
 
-	if (data.split("|")[0] === "SUCCESS") {
-		if (data.split("|")[1] === "PLAYER") {
+	if (status === 200) {
+		if (data === "PLAYER") {
 			isGM = false;
 		} else {
 			isGM = true;
-			gameID = data.split("|")[1];
+			gameID = data;
 		}
 	}
 
@@ -99,7 +142,28 @@ function goToLobby(data, status, request) {
 	$(".join-game-area").css("display", "none");
 	$(".lobby-area").css("display", "flex");
 
-	setTimeout(requestGameStateUpdate, refreshTime);
+	// And start update function
+	requestGameStateUpdate();
+}
+
+function leaveGame(gameID, playerName) {
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "type": "REFRESH" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: (data, status, request) => {
+			gameID = "";
+			playerName = "";
+			isGM = false;
+			failedAttempts = 0;
+			clearTimeout(refreshTimeout);
+			refreshTimeout = undefined;
+		}
+	});
 }
 
 /** Using function to have access to this */
@@ -127,6 +191,8 @@ $(".back-button").click(() => {
 $("#close-button").click(() => {
 	$(".button-area").css("display", "flex");
 	$(".lobby-area").css("display", "none");
+
+	leaveGame(gameID, playerName);
 });
 
 $("#new-game-button").click(() => {
@@ -136,7 +202,7 @@ $("#new-game-button").click(() => {
 
 $("#join-game-button").click(() => {
 	gameID = $("input[name='join-game-id'").val();
-	let playerName = $("input[name='join-game-player-name'").val();
+	playerName = $("input[name='join-game-player-name'").val();
 	joinGame(gameID, playerName);
 });
 
