@@ -3,12 +3,20 @@
 // Server sent events: https://www.w3schools.com/html/html5_serversentevents.asp
 
 let gameID = "";
+let isGM = false;
+let languageCode = "en";
 
-let debug = {};
+let debug = {
+	dev: true,
+};
 debug.log = function (msg) {
-	console.log(msg); //eslint-disable-line no-console
+	if (debug.dev) console.log(msg); //eslint-disable-line no-console
 };
 
+/**
+ * Perform I18N in the whole page for the specified language code
+ * @param {String} languageCode ISO 639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ */
 function doI18N(languageCode) {
 	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
 		for (let key in I18N) {
@@ -18,42 +26,10 @@ function doI18N(languageCode) {
 }
 
 /**
- * Generate a random string of the specified length
- * @param {Number} length
- * @returns {String}
+ * Start or join a game with the given gameID
+ * @param {String} gameID
+ * @param {String} playerName
  */
-function randomString(length = 11) {
-	let str = "";
-	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	for (let i = 0; i < length; ++i) {
-		str += chars[Math.floor(Math.random() * chars.length)];
-	}
-	return str;
-}
-
-/** */
-function newGame(playerName) {
-	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
-		type: "POST",
-		data: { "gameID": "", "playerName": playerName, "type": "JOIN" },
-		error: (request, status, error) => {
-			debug.log("Request: " + request);
-			debug.log("Status: " + status);
-			debug.log("Error: " + error);
-		},
-		success: (data, status, request) => {
-			debug.log("Data: " + data);
-			debug.log("Status: " + status);
-			debug.log("Request: " + request);
-
-			if (data.split("|")[0] === "SUCCESS") {
-				gameID = data.split("|")[1];
-			}
-		}
-	});
-}
-
-/** */
 function joinGame(gameID, playerName) {
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
@@ -63,21 +39,55 @@ function joinGame(gameID, playerName) {
 			debug.log("Status: " + status);
 			debug.log("Error: " + error);
 		},
-		success: (data, status, request) => {
-			debug.log("Data: " + data);
-			debug.log("Status: " + status);
-			debug.log("Request: " + request);
-
-			if (data.split("|")[0] === "SUCCESS") {
-				gameID = data.split("|")[1];
-			}
-		}
+		success: goToLobby
 	});
+}
+
+/**
+ * Main function. It deals with changes in the server DB
+ */
+function updateGameState() {
+
+	setTimeout(updateGameState, 2);
+}
+
+/**
+ *  Store the gameID, enter lobby and start a repeating update function (recursive timeout)
+ * @param {String} data
+ * @param {String} status
+ * @param {String} request
+ */
+function goToLobby(data, status, request) {
+	debug.log("Data: " + data);
+	debug.log("Status: " + status);
+	debug.log("Request: " + request);
+
+	if (data.split("|")[0] === "SUCCESS") {
+		if (data.split("|")[1] === "PLAYER") {
+			isGM = false;
+		} else {
+			isGM = true;
+			gameID = data.split("|")[1];
+		}
+	}
+
+	$("#game-id").html(gameID);
+
+	if (isGM) {
+		$("#start-button").css("display", "block");
+	}
+
+	$(".new-game-area").css("display", "none");
+	$(".join-game-area").css("display", "none");
+	$(".lobby-area").css("display", "flex");
+
+	setTimeout(updateGameState, 2);
 }
 
 /** Using function to have access to this */
 $("#language-select").change(function () {
-	doI18N(this.value);
+	languageCode = this.value;
+	doI18N(languageCode);
 });
 
 $("#start-new-game-button").click(() => {
@@ -96,13 +106,18 @@ $(".back-button").click(() => {
 	$(".join-game-area").css("display", "none");
 });
 
+$("#close-button").click(() => {
+	$(".button-area").css("display", "flex");
+	$(".lobby-area").css("display", "none");
+});
+
 $("#new-game-button").click(() => {
 	let playerName = $("input[name='new-game-player-name'").val();
-	newGame(playerName);
+	joinGame("", playerName);
 });
 
 $("#join-game-button").click(() => {
-	let gameID = $("input[name='join-game-id'").val();
+	gameID = $("input[name='join-game-id'").val();
 	let playerName = $("input[name='join-game-player-name'").val();
 	joinGame(gameID, playerName);
 });

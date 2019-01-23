@@ -1,5 +1,12 @@
 {
 	"title": "Мафия",
-	"new-game-button": "НОВАЯ ИГРА",
-	"join-game-button": "ВСТУПИТЬ В ИГРУ"
+	"start-new-game-button": "НОВАЯ ИГРА",
+	"start-join-game-button": "ВСТУПИТЬ В ИГРУ",
+	"new-game-button": "CREATE",
+	"new-game-back-button": "BACK",
+	"join-game-back-button": "BACK",
+	"join-game-button": "JOIN",
+	"game-id-label": "Access code: ",
+	"start-button": "START",
+	"close-button": "CLOSE"
 }

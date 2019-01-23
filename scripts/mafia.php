@@ -7,6 +7,8 @@ define('DB_NAME', 'id2777537_mafia_db');
 define('DB_USERNAME', 'id2777537_crazy_maniac');
 define('DB_PASSWORD', '%h$4Cb1LlXhj');
 
+define('SLEEP_TIME', 5);
+
 //region Base logic
 
 // Handle no parameters
@@ -24,15 +26,19 @@ $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
+        // Join the current game or create one if none exists
         joinGame($gameID, $playerID, $playerName);
         break;
     case 'LEAVE':
+        // Leave the current game
         leaveGame($gameID, $playerID);
         break;
     case 'REFRESH':
+        // Get the updated game state
         refreshGameState($gameID);
         break;
-    case 'CHANGE':
+    case 'DELEGATE':
+        // Change the GM
         changeGM($gameID, $playerID);
         break;
     default:
@@ -68,10 +74,10 @@ function joinGame($gameID, $playerID, $playerName)
         } while ($result);
 
         // First player in a game becomes the GM
-        $playersData = json_encode(['players' => array('playerID' => $playerID, 'playerName' => $playerName)]);
+        $playersData = json_encode(['players' => [['playerID' => $playerID, 'playerName' => $playerName]]]);
         $gameData = json_encode(['data' => '']);
         if ($result = $mysqli->query('INSERT INTO games VALUES (\'' . $gameID . '\', \'' . $playersData . '\', \'' . $gameData . '\', \'' . $playerID . '\')')) {
-            // Now, send new gameID back to the player
+            // Now, send new gameID back to the host player
             echo 'SUCCESS|' . $gameID;
         } else {
             echo 'ERROR|GAME NOT CREATED';
@@ -80,22 +86,30 @@ function joinGame($gameID, $playerID, $playerName)
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
-        $result = $mysqli->query('SELECT players FROM games WHERE gameID = ' . $gameID);
+        $result = $mysqli->query('SELECT players FROM games WHERE gameID = \'' . $gameID . '\'');
 
-        if (!$result) {
+        if ($result->num_rows <= 0) {
             // Wait, there is no game with such ID
             echo 'ERROR|GAME NOT FOUND';
         }
 
+        // There should be only one game with this ID, so join first one with matched ID
+        $players = json_decode(($result->fetch_row())[0], true);
+        $result->close();
         // Add this playerID to the players array, and insert back into the entry
-        $players = json_decode($result, true);
-        array_push($players['players'], array('playerID' => $playerID, 'playerName' => $playerName));
+        array_push($players['players'], ['playerID' => $playerID, 'playerName' => $playerName]);
         $playersData = json_encode($players);
-        $result = $mysqli->query('UPDATE games (players) VALUE ' . $playersData . ' WHERE gameID = ' . $gameID);
 
-        // Signal the client that the game is ready
-        echo 'SUCCESS|' . $gameID;
+        if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+            // Signal the client that the game is ready
+            die('SUCCESS|PLAYER');
+        } else {
+            die('ERROR|NOT JOINED GAME');
+        }
     }
+
+    // Now store the gameID in $_SESSION, so that we stay connected until the browser is closed
+    $_SESSION['gameID'] = $gameID;
 }
 
 //

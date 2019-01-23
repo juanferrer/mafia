@@ -1,5 +1,12 @@
 {
 	"title": "Mafia",
-	"new-game-button": "NEW GAME",
-	"join-game-button": "JOIN GAME"
+	"start-new-game-button": "NEW GAME",
+	"start-join-game-button": "JOIN GAME",
+	"new-game-button": "CREATE",
+	"new-game-back-button": "BACK",
+	"join-game-back-button": "BACK",
+	"join-game-button": "JOIN",
+	"game-id-label": "Access code: ",
+	"start-button": "START",
+	"close-button": "CLOSE"
 }
