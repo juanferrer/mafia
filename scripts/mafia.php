@@ -154,12 +154,11 @@ function leaveGame($gameID, $playerName)
     $players = json_decode(($result->fetch_row())[0], true);
     $result->close();
     // Remove this playerID to the players array, and insert back into the entry
-    $newPlayers = array_filter($players['players'], function ($v) {
+    $newPlayers = array_filter($players['players'], function ($v) use ($playerName) {
         return $v['playerName'] != $playerName;
     });
-    $playersData = json_encode($newPlayers);
 
-    if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+    if ($result = $mysqli->query('UPDATE games SET players = \'' . json_encode(['players' => $newPlayers]) . '\' WHERE gameID = \'' . $gameID . '\'')) {
         // Signal the client that the game is ready
         exit('DISCONNECTED');
     } else {
@@ -193,7 +192,7 @@ function refreshGameState($gameID)
     $data = $result->fetch_assoc();
     $result->close();
 
-    exit($data);
+    exit(json_encode($data));
 }
 
 function changeGameData($gameID, $variable, $value)

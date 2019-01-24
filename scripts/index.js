@@ -58,15 +58,17 @@ function joinGame(gameID, playerName) {
 /**
  * Main function. It deals with changes in the server DB
  */
-function updateGameState(data, status) {
+function updateGameState(data, status, request) {
 	debug.log("Data: " + data);
 	debug.log("Status: " + status);
 
-	if (status === 200) {
+	if (request.status === 200) {
 		failedAttempts = 0;
 
-		let gameData = JSON.parse(data.split("|")[0]);
-		let newPlayers = JSON.parse(data.split("|")[1]);
+		let json = JSON.parse(data);
+
+		let gameData = JSON.parse(json.gameData);
+		let newPlayers = JSON.parse(json.players);
 
 		// Now, do what is needed with the received data
 
@@ -123,33 +125,33 @@ function goToLobby(data, status, request) {
 	debug.log("Status: " + status);
 	debug.log("Request: " + request);
 
-	if (status === 200) {
+	if (request.status === 200) {
 		if (data === "PLAYER") {
 			isGM = false;
 		} else {
 			isGM = true;
 			gameID = data;
 		}
+
+		$("#game-id").html(gameID);
+
+		if (isGM) {
+			$("#start-button").css("display", "block");
+		}
+
+		$(".new-game-area").css("display", "none");
+		$(".join-game-area").css("display", "none");
+		$(".lobby-area").css("display", "flex");
+
+		// And start update functionx
+		requestGameStateUpdate();
 	}
-
-	$("#game-id").html(gameID);
-
-	if (isGM) {
-		$("#start-button").css("display", "block");
-	}
-
-	$(".new-game-area").css("display", "none");
-	$(".join-game-area").css("display", "none");
-	$(".lobby-area").css("display", "flex");
-
-	// And start update function
-	requestGameStateUpdate();
 }
 
 function leaveGame(gameID, playerName) {
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
-		data: { "gameID": gameID, "type": "REFRESH" },
+		data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
 		error: (request, status, error) => {
 			debug.log("Request: " + request);
 			debug.log("Status: " + status);
