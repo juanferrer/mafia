@@ -158,8 +158,10 @@ function leaveGame($gameID, $playerName)
         return $v['playerName'] != $playerName;
     });
 
-    if ($result = $mysqli->query('UPDATE games SET players = \'' . json_encode(['players' => $newPlayers]) . '\' WHERE gameID = \'' . $gameID . '\'')) {
-        // Signal the client that the game is ready
+    $playersData = json_encode(['players' => $newPlayers]);
+
+    if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+        // Signal the client that they have disconnected
         exit('DISCONNECTED');
     } else {
         http_response_code(500);
@@ -195,8 +197,25 @@ function refreshGameState($gameID)
     exit(json_encode($data));
 }
 
-function changeGameData($gameID, $variable, $value)
+function changeGameData($gameID, $newData)
 {
+    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    if ($mysqli->connect_error) {
+        // Unable to connect to DB
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
+    }
+
+    $gameData = json_encode(['data' => $newData]);
+
+    if ($result = $mysqli->query('UPDATE games SET gameData = \'' . $gameData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+        // Signal the client that the data has been updated
+        exit();
+    } else {
+        http_response_code(500);
+        die('UNABLE TO UPDATE');
+    }
 
 }
 
