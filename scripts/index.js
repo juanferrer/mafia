@@ -214,7 +214,7 @@ function goToLobby(data, status, request) {
 
 		if (isGM) {
 			$("#start-button").css("display", "block");
-			$(".settings-area").css("display", "flex");
+			$(".settings").css("display", "flex");
 		}
 
 		$(".new-game-area").css("display", "none");
