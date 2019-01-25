@@ -1,6 +1,9 @@
 /* globals $ */
 
-// Server sent events: https://www.w3schools.com/html/html5_serversentevents.asp
+const Roles = Object.freeze({
+	MAFIOSO: Symbol("mafioso"),
+	INNOCENT: Symbol("innocent"),
+});
 
 let gameID = "";
 let playerName = "";
@@ -10,6 +13,14 @@ let refreshTime = 2000;
 let refreshTimeout;
 let failedAttempts = 0;
 let i18n = {};
+let players = [];
+let availableRoles = [{
+	type: Roles.MAFIOSO,
+	amount: 0
+}, {
+	type: Roles.INNOCENT,
+	amount: 0
+}];
 
 let debug = {
 	dev: true,
@@ -36,6 +47,8 @@ function doI18N(languageCode) {
 	});
 }
 
+// #region API calls
+
 /**
  * Start or join a game with the given gameID
  * @param {String} gameID
@@ -56,6 +69,79 @@ function joinGame(gameID, playerName) {
 		success: goToLobby
 	});
 }
+
+function requestGameStateUpdate() {
+
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "type": "REFRESH" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: updateGameState
+	});
+}
+
+function leaveGame(gameID, playerName) {
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: (data, status, request) => {
+			debug.log("Data: " + data);
+			debug.log("Status: " + status);
+			debug.log("Request: " + request);
+
+			gameID = "";
+			playerName = "";
+			isGM = false;
+			failedAttempts = 0;
+			clearTimeout(refreshTimeout);
+			refreshTimeout = undefined;
+		}
+	});
+}
+
+function setGameActive(gameID, playerName, makeActive) {
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "playerName": playerName, "active": makeActive, "type": "SETACTIVE" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: (data, status, request) => {
+			debug.log("Data: " + data);
+			debug.log("Status: " + status);
+			debug.log("Request: " + request);
+		}
+	});
+}
+
+function changeGameData(gameID, playerName, gameData) {
+	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+		type: "POST",
+		data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
+		error: (request, status, error) => {
+			debug.log("Request: " + request);
+			debug.log("Status: " + status);
+			debug.log("Error: " + error);
+		},
+		success: (data, status, request) => {
+			debug.log("Data: " + data);
+			debug.log("Status: " + status);
+			debug.log("Request: " + request);
+		}
+	});
+}
+// #endregion
 
 /**
  * Main function. It deals with changes in the server DB
@@ -83,6 +169,8 @@ function updateGameState(data, status, request) {
 				$("#players-list").append(`<span>${p}</span>`);
 			});
 
+			players = newPlayers;
+
 			if (isPlaying) {
 				// Start the game
 			}
@@ -101,20 +189,6 @@ function updateGameState(data, status, request) {
 			debug.error("Server not responding.");
 		}
 	}
-}
-
-function requestGameStateUpdate() {
-
-	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
-		type: "POST",
-		data: { "gameID": gameID, "type": "REFRESH" },
-		error: (request, status, error) => {
-			debug.log("Request: " + request);
-			debug.log("Status: " + status);
-			debug.log("Error: " + error);
-		},
-		success: updateGameState
-	});
 }
 
 /**
@@ -140,6 +214,7 @@ function goToLobby(data, status, request) {
 
 		if (isGM) {
 			$("#start-button").css("display", "block");
+			$(".settings-area").css("display", "flex");
 		}
 
 		$(".new-game-area").css("display", "none");
@@ -151,28 +226,21 @@ function goToLobby(data, status, request) {
 	}
 }
 
-function leaveGame(gameID, playerName) {
-	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
-		type: "POST",
-		data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
-		error: (request, status, error) => {
-			debug.log("Request: " + request);
-			debug.log("Status: " + status);
-			debug.log("Error: " + error);
-		},
-		success: (data, status, request) => {
-			debug.log("Data: " + data);
-			debug.log("Status: " + status);
-			debug.log("Request: " + request);
+/**
+ * Assign roles to each player and return a gameData object
+ * @param {string[]} players
+ * @returns {any} gameData
+ */
+function assignRoles(players) {
+	let gameData = {
+		roles: {}
+	};
 
-			gameID = "";
-			playerName = "";
-			isGM = false;
-			failedAttempts = 0;
-			clearTimeout(refreshTimeout);
-			refreshTimeout = undefined;
-		}
+	players.forEach(p => {
+		gameData.roles[p] = "";
 	});
+
+	return gameData;
 }
 
 /** Using function to have access to this */
@@ -197,13 +265,6 @@ $(".back-button").click(() => {
 	$(".join-game-area").css("display", "none");
 });
 
-$("#close-button").click(() => {
-	$(".button-area").css("display", "flex");
-	$(".lobby-area").css("display", "none");
-
-	leaveGame(gameID, playerName);
-});
-
 $("#new-game-button").click(() => {
 	playerName = $("input[name='new-game-player-name'").val();
 	joinGame("", playerName);
@@ -213,6 +274,19 @@ $("#join-game-button").click(() => {
 	gameID = $("input[name='join-game-id'").val();
 	playerName = $("input[name='join-game-player-name'").val();
 	joinGame(gameID, playerName);
+});
+
+$("#start-button").click(() => {
+	let gameData = assignRoles(players);
+	setGameActive(gameID, playerName, true);
+	changeGameData(gameID, playerName, gameData);
+	$(".lobby-area").css("display", "none");
+});
+
+$("#close-button").click(() => {
+	$(".button-area").css("display", "flex");
+	$(".lobby-area").css("display", "none");
+	leaveGame(gameID, playerName);
 });
 
 window.addEventListener("beforeunload", () => {

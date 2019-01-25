@@ -32,11 +32,13 @@ switch (strtoupper($requestType)) {
         // Leave the current game
         $gameID = $_POST['gameID'];
         $playerName = $_POST['playerName'];
+        //
         leaveGame($gameID, $playerName);
         break;
     case 'REFRESH':
         // Get the updated game state
         $gameID = $_POST['gameID'];
+        //
         refreshGameState($gameID);
         break;
     case 'CHANGE':
@@ -44,14 +46,14 @@ switch (strtoupper($requestType)) {
         $gameID = $_POST['gameID'];
         $playerName = $_POST['playerName'];
         $newData = $_POST['newData'];
-
+        //
         changeGameData($gameID, $playerName, $newData);
         break;
     case 'SETACTIVE':
         $gameID = $_POST['gameID'];
         $playerName = $_POST['playerName'];
         $active = $_POST['active'];
-
+        // Start/stop game and update date
         changeGameState($gameID, $playerName, $active);
 
     default:
@@ -83,7 +85,7 @@ function joinGame($gameID, $playerName)
             // If $gameID empty, create new game
             $gameID = newGameID();
             // Count number of rows with $gameID
-            $result = $mysqli->query('SELECT COUNT(1) FROM games WHERE gameID = ' . $gameID);
+            $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = $gameID");
             if ($result > 0) {
                 // Wait, there is a game already using this ID. Try again
                 $result->close();
@@ -94,7 +96,7 @@ function joinGame($gameID, $playerName)
         // First player in a game becomes the GM
         $playersData = json_encode(['players' => [$playerName]]);
         $gameData = json_encode(['data' => '']);
-        if ($result = $mysqli->query('INSERT INTO games VALUES (\'' . $gameID . '\', \'' . $playersData . '\', \'' . $gameData . '\', \'' . $playerName . '\', 0)')) {
+        if ($result = $mysqli->query("INSERT INTO games VALUES ('$gameID', '$playersData', '$gameData', '$playerName', 0, CURDATE())")) {
             // Now, send new gameID back to the host player
             exit($gameID);
         } else {
@@ -105,7 +107,7 @@ function joinGame($gameID, $playerName)
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
-        $result = $mysqli->query('SELECT players FROM games WHERE gameID = \'' . $gameID . '\'');
+        $result = $mysqli->query("SELECT players FROM games WHERE gameID = '$gameID'");
 
         if ($result->num_rows <= 0) {
             // Wait, there is no game with that ID
@@ -120,7 +122,7 @@ function joinGame($gameID, $playerName)
         array_push($players['players'], $playerName);
         $playersData = json_encode($players);
 
-        if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+        if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
             // Signal the client that the game is ready
             exit('PLAYER');
         } else {
@@ -152,7 +154,7 @@ function leaveGame($gameID, $playerName)
     }
 
     if (playerIsGM($gameID, $playerName)) {
-        if ($result = $mysqli->query('UPDATE games SET isPlaying = 0 WHERE gameID = \'' . $gameID . '\'')) {
+        if ($result = $mysqli->query("UPDATE games SET isPlaying = 0 WHERE gameID = '$gameID'")) {
             // All good, keep going
         } else {
             http_response_code(500);
@@ -160,7 +162,7 @@ function leaveGame($gameID, $playerName)
         }
     }
 
-    $result = $mysqli->query('SELECT players FROM games WHERE gameID = \'' . $gameID . '\'');
+    $result = $mysqli->query("SELECT players FROM games WHERE gameID = '$gameID'");
 
     if ($result->num_rows <= 0) {
         // Wait, there is no game with that ID
@@ -176,7 +178,7 @@ function leaveGame($gameID, $playerName)
 
     if (count($players) === 1) {
         // We are the last player in the game, remove the DB entry
-        if ($result = $mysqli->query('DELETE FROM games WHERE gameID = \'' . $gameID . '\'')) {
+        if ($result = $mysqli->query("DELETE FROM games WHERE gameID = '$gameID'")) {
             exit('DELETED');
         } else {
             http_response_code(500);
@@ -191,7 +193,7 @@ function leaveGame($gameID, $playerName)
 
     $playersData = json_encode(['players' => $players]);
 
-    if ($result = $mysqli->query('UPDATE games SET players = \'' . $playersData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+    if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
         // Signal the client that they have disconnected
         exit('DISCONNECTED');
     } else {
@@ -211,7 +213,7 @@ function refreshGameState($gameID)
         die('UNABLE TO CONNECT');
     }
 
-    $result = $mysqli->query('SELECT gameData, players, isPlaying FROM games WHERE gameID = \'' . $gameID . '\'');
+    $result = $mysqli->query("SELECT gameData, players, isPlaying FROM games WHERE gameID = '$gameID'");
 
     if ($result->num_rows <= 0) {
         // No data retrieved
@@ -236,7 +238,7 @@ function changeGameData($gameID, $playerName, $newData)
 
     $gameData = json_encode(['data' => $newData]);
 
-    if ($result = $mysqli->query('UPDATE games SET gameData = \'' . $gameData . '\' WHERE gameID = \'' . $gameID . '\'')) {
+    if ($result = $mysqli->query("UPDATE games SET gameData = '$gameData' WHERE gameID = '$gameID'")) {
         // Signal the client that the data has been updated
         exit();
     } else {
@@ -278,7 +280,7 @@ function playerIsGM($gameID, $playerName)
         die('UNABLE TO CONNECT');
     }
 
-    $result = $mysqli->query('SELECT gmName FROM games WHERE gameID = \'' . $gameID . '\'');
+    $result = $mysqli->query("SELECT gmName FROM games WHERE gameID = '$gameID'");
 
     if ($result->num_rows <= 0) {
         // Wait, there is no game with that ID
