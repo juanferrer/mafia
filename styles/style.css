@@ -53,20 +53,28 @@ hr {
 	justify-content: space-around;
 }
 
-.game-button {
-	outline: none;
-	margin: 10px;
-	padding: 10px;
-	width: 45%;
+button {
 	background-color: transparent;
 	border-color: var(--secondary-color);
 	border-style: solid;
-	border-radius: 5px;
 	border-width: 1px;
+	outline: none;
 }
 
-.game-button:focus {
+button:focus {
 	border-color: var(--accent-color);
+}
+
+button:hover {
+	background-color: var(--accent-color);
+	color: white;
+}
+
+.game-button {
+	margin: 10px;
+	padding: 10px;
+	width: 45%;
+	border-radius: 5px;
 }
 
 .game-area {
@@ -124,10 +132,60 @@ hr {
 .settings {
 	height: 100%;
 	width: 90%;
+	flex-direction: row;
+	justify-content: center;
+	display: none;
+}
+
+.label-counter-pair {
+	width: 50%;
+	height: 100%;
+	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	align-items: center;
+}
 
-	display: none;
+.counter {
+	display: flex;
+	flex-direction: row;
+	height: 40%;
+	width: 50%;
+}
+
+.counter-display {
+	width: 50%;
+	margin: 0;
+	background-color: transparent;
+	border-color: var(--secondary-color);
+	border-style: solid;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-width: 1px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.counter-button-pair {
+	display: flex;
+	flex-direction: column;
+	width: 50%;
+	height: 100%;
+}
+
+.counter-button {
+	height: 50%;
+	border-left: none;
+}
+
+.counter-increment-button {
+	border-top-right-radius: 5px;
+}
+
+.counter-decrement-button {
+	border-bottom-right-radius: 5px;
+	border-top: none;
 }
 
 #start-button {

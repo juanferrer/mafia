@@ -52,12 +52,26 @@
 			<div class="players-list" id="players-list">
 			</div>
 			<div class="settings">
-				<div class="input-label-pair">
+				<div class="label-counter-pair">
 					<label for="mafioso-number-input" id="mafioso-number-input-label">Mafiosos</label>
-					<input id="mafioso-number-input" type="number" min="0">
+					<div class="counter">
+						<div class="counter-display" id="mafioso-counter-display">1</div>
+						<div class="counter-button-pair">
+							<button class="counter-button counter-increment-button" data-display="mafioso-counter-display">+</button>
+							<button class="counter-button counter-decrement-button" data-display="mafioso-counter-display">-</button>
+						</div>
+					</div>
 				</div>
-				<label for="innocent-number-input" id="innocent-number-input-label">Innocents</label>
-				<input id="innocent-number-input" type="number" min="0">
+				<div class="label-counter-pair">
+					<label for="mafioso-number-input" id="mafioso-number-input-label">Innocents</label>
+					<div class="counter">
+						<div class="counter-display" id="innocent-number-input-label">1</div>
+						<div class="counter-button-pair">
+							<button class="counter-button counter-increment-button" data-display="innocent-counter-display">+</button>
+							<button class="counter-button counter-decrement-button" data-display="innocent-counter-display">-</button>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="button-pair">
 				<button class="game-button" id="start-button">START</button>
