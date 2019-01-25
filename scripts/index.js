@@ -9,7 +9,7 @@ let languageCode = "en";
 let refreshTime = 2000;
 let refreshTimeout;
 let failedAttempts = 0;
-let players = new Set();
+let i18n = {};
 
 let debug = {
 	dev: true,
@@ -28,6 +28,8 @@ debug.error = function (msg) {
  */
 function doI18N(languageCode) {
 	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
+		// Cache whatever language the user selected
+		i18n = I18N;
 		for (let key in I18N) {
 			$(`#${key}`).html(I18N[key]);
 		}
@@ -67,24 +69,25 @@ function updateGameState(data, status, request) {
 
 		let json = JSON.parse(data);
 
-		let gameData = JSON.parse(json.gameData);
+		// let gameData = JSON.parse(json.gameData);
 		let newPlayers = JSON.parse(json.players);
+		let isPlaying = JSON.parse(json.isPlaying);
 
 		// Now, do what is needed with the received data
 
-		// If the lobby is visible, we should add the players as soon as we see them
 		if ($("#lobby-area").css("display") !== "none") {
-			// Check what players are already there, and add the ones missing
-			// Get all the elements in newPlayers that are not in players
-			// That is, players that need to be added
-			/*var missingPlayers = (new Set(newPlayers).filter(item => {
-				return !players.has(item);
-			}));*/
+			// Lobby is visible, we should add the players as soon as we see them
 			$("#players-list").html("");
 
-			newPlayers.players.forEach(e => {
-				$("#players-list").append(`<span>${e.playerName}</span>`);
+			newPlayers.players.forEach(p => {
+				$("#players-list").append(`<span>${p}</span>`);
 			});
+
+			if (isPlaying) {
+				// Start the game
+			}
+		} else if ($("#gameplay-area").css("display") !== "none") {
+			// We're playing, so update the game according to the new data
 		}
 
 		// And request update again
@@ -158,6 +161,10 @@ function leaveGame(gameID, playerName) {
 			debug.log("Error: " + error);
 		},
 		success: (data, status, request) => {
+			debug.log("Data: " + data);
+			debug.log("Status: " + status);
+			debug.log("Request: " + request);
+
 			gameID = "";
 			playerName = "";
 			isGM = false;
@@ -198,7 +205,7 @@ $("#close-button").click(() => {
 });
 
 $("#new-game-button").click(() => {
-	let playerName = $("input[name='new-game-player-name'").val();
+	playerName = $("input[name='new-game-player-name'").val();
 	joinGame("", playerName);
 });
 
@@ -208,4 +215,8 @@ $("#join-game-button").click(() => {
 	joinGame(gameID, playerName);
 });
 
-// Cache whatever language the user selected
+window.addEventListener("beforeunload", () => {
+	if ($("#gameplay-area").css("display") !== "none") {
+		leaveGame(gameID, playerName);
+	}
+});
