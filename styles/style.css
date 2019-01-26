@@ -5,6 +5,7 @@
 	--accent-color: #a1f;
 	--text-color: #777;
 	--small-text-color: #999;
+	--button-disabled-color: #88888844;
 }
 
 /* TOOD: Set two themes here by changing the colours of some basic elements */
@@ -68,6 +69,14 @@ button:focus {
 button:hover {
 	background-color: var(--accent-color);
 	color: white;
+}
+
+button:disabled {
+	background-color: var(--button-disabled-color);
+}
+
+button:focus:disabled {
+	color: initial;
 }
 
 .game-button {

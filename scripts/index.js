@@ -1,8 +1,8 @@
 /* globals $ */
 
 const Roles = Object.freeze({
-	MAFIOSO: Symbol("mafioso"),
-	INNOCENT: Symbol("innocent"),
+	MAFIOSO: "MAFIOSO",
+	INNOCENT: "INNOCENT",
 });
 
 let gameID = "";
@@ -14,13 +14,7 @@ let refreshTimeout;
 let failedAttempts = 0;
 let i18n = {};
 let players = [];
-let availableRoles = [{
-	type: Roles.MAFIOSO,
-	amount: 0
-}, {
-	type: Roles.INNOCENT,
-	amount: 0
-}];
+let gameData = {};
 
 let debug = {
 	dev: true,
@@ -121,6 +115,10 @@ function setGameActive(gameID, playerName, makeActive) {
 			debug.log("Data: " + data);
 			debug.log("Status: " + status);
 			debug.log("Request: " + request);
+			$(".lobby-area").css("display", "none");
+			$(".gameplay-area").css("display", "flex");
+			clearTimeout(refreshTimeout);
+			refreshTimeout = undefined;
 		}
 	});
 }
@@ -138,6 +136,7 @@ function changeGameData(gameID, playerName, gameData) {
 			debug.log("Data: " + data);
 			debug.log("Status: " + status);
 			debug.log("Request: " + request);
+			setGameActive(gameID, playerName, true);
 		}
 	});
 }
@@ -156,8 +155,9 @@ function updateGameState(data, status, request) {
 		let json = JSON.parse(data);
 
 		// let gameData = JSON.parse(json.gameData);
-		let newPlayers = JSON.parse(json.players);
+		let newPlayers = JSON.parse(json.players).players;
 		let isPlaying = JSON.parse(json.isPlaying);
+		gameData = JSON.parse(json.gameData);
 
 		// Now, do what is needed with the received data
 
@@ -165,11 +165,14 @@ function updateGameState(data, status, request) {
 			// Lobby is visible, we should add the players as soon as we see them
 			$("#players-list").html("");
 
-			newPlayers.players.forEach(p => {
-				$("#players-list").append(`<span>${p}</span>`);
-			});
+			if (newPlayers) {
+				newPlayers.forEach(p => {
+					$("#players-list").append(`<span>${p}</span>`);
+				});
+			}
 
 			players = newPlayers;
+			updateCounters();
 
 			if (isPlaying) {
 				// Start the game
@@ -221,9 +224,25 @@ function goToLobby(data, status, request) {
 		$(".join-game-area").css("display", "none");
 		$(".lobby-area").css("display", "flex");
 
-		// And start update functionx
+		// And start update function
 		requestGameStateUpdate();
 	}
+}
+
+/**
+ * Shuffle array in place
+ * @param {any[]} arr
+ * @returns {any[]}
+ */
+function shuffle(arr) {
+	var j, x, i;
+	for (i = arr.length - 1; i > 0; i--) {
+		j = Math.floor(Math.random() * (i + 1));
+		x = arr[i];
+		arr[i] = arr[j];
+		arr[j] = x;
+	}
+	return arr;
 }
 
 /**
@@ -235,12 +254,78 @@ function assignRoles(players) {
 	let gameData = {
 		roles: {}
 	};
+	let rolesArray = [];
 
-	players.forEach(p => {
-		gameData.roles[p] = "";
+	let mafiosoNumber = parseInt($("#mafioso-counter-display").attr("data-value"));
+	for (let i = 0; i < mafiosoNumber; ++i) {
+		rolesArray.push(Roles.MAFIOSO);
+	}
+	let innocentNumber = parseInt($("#innocent-counter-display").attr("data-value"));
+	for (let i = 0; i < innocentNumber; ++i) {
+		rolesArray.push(Roles.INNOCENT);
+	}
+
+	rolesArray = shuffle(rolesArray);
+	// Now that we have "shuffled the cards", give a role to each player
+	players.forEach((p, i) => {
+		gameData.roles[p] = rolesArray[i];
 	});
 
 	return gameData;
+}
+
+/** Update the counter's display */
+function updateCounters() {
+	// Update each counter button
+	$(".counter-button").each((index, counterButton) => {
+		let display = $(`#${counterButton.getAttribute("data-display")}`);
+		let number = parseInt(display.attr("data-value"));
+		let totalRoles = players.length - 1; // -1 because the GM is actually not playing
+		let rolesAssigned = 0;
+		$(".counter-display").toArray().forEach(v => {
+			rolesAssigned += parseInt(v.getAttribute("data-value"));
+		});
+
+		if (counterButton.classList.contains("counter-increment-button")) {
+			if (rolesAssigned >= totalRoles) {
+				counterButton.setAttribute("disabled", true);
+			} else {
+				counterButton.removeAttribute("disabled");
+			}
+		} else if (counterButton.classList.contains("counter-decrement-button")) {
+			if (rolesAssigned <= 0 || number <= 0) {
+				counterButton.setAttribute("disabled", true);
+			} else {
+				counterButton.removeAttribute("disabled");
+			}
+		}
+	});
+
+	// Update each counter display
+	$(".counter-display").each((index, display) => {
+		display.innerHTML = $(display).attr("data-value");
+	});
+}
+
+/**
+ * Add or substract a number from the specified counter
+ * @param {HTMLElement} counterButton
+ * @param {Number} modifier
+ */
+function modifyCounter(counterButton, modifier) {
+	let display = $(`#${counterButton.getAttribute("data-display")}`);
+	let number = parseInt(display.attr("data-value"));
+	let totalRoles = players.length;
+	let rolesAssigned = 0;
+	$(".counter-display").toArray().forEach(v => {
+		rolesAssigned += parseInt(v.getAttribute("data-value"));
+	});
+
+	if ((modifier > 0 && rolesAssigned < totalRoles) || (modifier < 0 && rolesAssigned >= 0)) {
+		display.attr("data-value", number + modifier);
+	}
+
+	updateCounters();
 }
 
 /** Using function to have access to this */
@@ -278,9 +363,7 @@ $("#join-game-button").click(() => {
 
 $("#start-button").click(() => {
 	let gameData = assignRoles(players);
-	setGameActive(gameID, playerName, true);
 	changeGameData(gameID, playerName, gameData);
-	$(".lobby-area").css("display", "none");
 });
 
 $("#close-button").click(() => {
@@ -289,8 +372,14 @@ $("#close-button").click(() => {
 	leaveGame(gameID, playerName);
 });
 
+$(".counter-increment-button").click((e) => {
+	modifyCounter(e.currentTarget, 1);
+});
+
+$(".counter-decrement-button").click((e) => {
+	modifyCounter(e.currentTarget, -1);
+});
+
 window.addEventListener("beforeunload", () => {
-	if ($("#gameplay-area").css("display") !== "none") {
-		leaveGame(gameID, playerName);
-	}
+	leaveGame(gameID, playerName);
 });
