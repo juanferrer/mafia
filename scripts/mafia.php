@@ -1,5 +1,11 @@
 <?php
 
+// Inform PHP that we're using UTF-8 strings
+mb_internal_encoding('UTF-8');
+mb_http_input('UTF-8');
+mb_http_output('UTF-8');
+mb_language('uni');
+
 header('Access-Control-Allow-Origin: juanferrer.github.io');
 header('Access-Control-Allow-Origin: *');
 
@@ -94,8 +100,8 @@ function joinGame($gameID, $playerName)
         } while (!$gameIDIsUnique);
 
         // First player in a game becomes the GM
-        $playersData = json_encode(['players' => [$playerName]]);
-        $gameData = json_encode(['data' => '']);
+        $playersData = json_encode(['players' => [$playerName]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $gameData = json_encode(['data' => ''], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($result = $mysqli->query("INSERT INTO games VALUES ('$gameID', '$playersData', '$gameData', '$playerName', 0, CURDATE())")) {
             // Now, send new gameID back to the host player
             exit($gameID);
@@ -120,7 +126,7 @@ function joinGame($gameID, $playerName)
         $result->close();
         // Add this player to the players array, and insert back into the entry
         array_push($players['players'], $playerName);
-        $playersData = json_encode($players);
+        $playersData = json_encode($players, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
             // Signal the client that the game is ready
@@ -191,7 +197,7 @@ function leaveGame($gameID, $playerName)
         unset($players[$key]);
     }
 
-    $playersData = json_encode(['players' => $players]);
+    $playersData = json_encode(['players' => $players], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
     if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
         // Signal the client that they have disconnected
@@ -223,7 +229,7 @@ function refreshGameState($gameID)
     $data = $result->fetch_assoc();
     $result->close();
 
-    exit(json_encode($data));
+    exit(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
 function changeGameData($gameID, $playerName, $newData)
@@ -236,7 +242,7 @@ function changeGameData($gameID, $playerName, $newData)
         die('UNABLE TO CONNECT');
     }
 
-    $gameData = json_encode(['data' => $newData]);
+    $gameData = json_encode(['data' => $newData], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
     if ($result = $mysqli->query("UPDATE games SET gameData = '$gameData' WHERE gameID = '$gameID'")) {
         // Signal the client that the data has been updated
