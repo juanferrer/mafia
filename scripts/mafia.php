@@ -195,6 +195,7 @@ function leaveGame($gameID, $playerName)
     // Otherwise, remove this player to the players array, and insert back into the entry
     if (($key = array_search($playerName, $players)) !== false) {
         unset($players[$key]);
+        $players = array_values($players);
     }
 
     $playersData = json_encode(['players' => $players], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
