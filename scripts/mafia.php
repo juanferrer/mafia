@@ -243,16 +243,43 @@ function changeGameData($gameID, $playerName, $newData)
         die('UNABLE TO CONNECT');
     }
 
-    $gameData = json_encode(['data' => $newData], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (playerIsGM($gameID, $playerName)) {
+        $gameData = json_encode(['data' => $newData], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-    if ($result = $mysqli->query("UPDATE games SET gameData = '$gameData' WHERE gameID = '$gameID'")) {
-        // Signal the client that the data has been updated
-        exit();
+        if ($result = $mysqli->query("UPDATE games SET gameData = '$gameData' WHERE gameID = '$gameID'")) {
+            // Signal the client that the data has been updated
+            exit();
+        } else {
+            http_response_code(500);
+            die('UNABLE TO UPDATE');
+        }
     } else {
-        http_response_code(500);
+        http_response_code(403);
         die('UNABLE TO UPDATE');
     }
+}
 
+function changeGameState($gameID, $playerName, $active)
+{
+    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+
+    if ($mysqli->connect_error) {
+        // Unable to connect to DB
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
+    }
+    if (playerIsGM($gameID, $playerName)) {
+        if ($result = $mysqli->query("UPDATE games SET isPlaying = $active WHERE gameID = '$gameID'")) {
+            // Signal the client that the state has been changed
+            exit();
+        } else {
+            http_response_code(500);
+            die('UNABLE TO UPDATE');
+        }
+    } else {
+        http_response_code(403);
+        die('UNABLE TO UPDATE');
+    }
 }
 
 //endregion

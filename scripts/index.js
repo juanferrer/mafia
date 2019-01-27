@@ -15,6 +15,7 @@ let failedAttempts = 0;
 let i18n = {};
 let players = [];
 let gameData = {};
+let playerRole = "";
 
 let debug = {
 	dev: true,
@@ -117,8 +118,8 @@ function setGameActive(gameID, playerName, makeActive) {
 			debug.log("Request: " + request);
 			$(".lobby-area").css("display", "none");
 			$(".gameplay-area").css("display", "flex");
-			clearTimeout(refreshTimeout);
-			refreshTimeout = undefined;
+			//clearTimeout(refreshTimeout);
+			//refreshTimeout = undefined;
 		}
 	});
 }
@@ -157,7 +158,7 @@ function updateGameState(data, status, request) {
 		// let gameData = JSON.parse(json.gameData);
 		let newPlayers = JSON.parse(json.players).players;
 		let isPlaying = JSON.parse(json.isPlaying);
-		gameData = JSON.parse(json.gameData);
+		gameData = JSON.parse(json.gameData).data;
 
 		// Now, do what is needed with the received data
 
@@ -175,9 +176,15 @@ function updateGameState(data, status, request) {
 			updateCounters();
 
 			if (isPlaying) {
+				// First, get our role
+				playerRole = gameData.roles[playerName];
 				// Start the game
+				populateGameplayArea();
+				$(".gameplay-area").css("display", "flex");
+				clearTimeout(refreshTimeout);
+				refreshTimeout = undefined;
 			}
-		} else if ($("#gameplay-area").css("display") !== "none") {
+		} else if ($(".gameplay-area").css("display") !== "none") {
 			// We're playing, so update the game according to the new data
 		}
 
@@ -266,6 +273,11 @@ function assignRoles(players) {
 	}
 
 	rolesArray = shuffle(rolesArray);
+	// Before assigning the roles, remove tha GM from the players and give them
+	// the role directly
+	players.splice(players.indexOf(playerName), 1);
+	gameData.roles[playerName] = "GM";
+
 	// Now that we have "shuffled the cards", give a role to each player
 	players.forEach((p, i) => {
 		gameData.roles[p] = rolesArray[i];
@@ -305,6 +317,11 @@ function updateCounters() {
 	$(".counter-display").each((index, display) => {
 		display.innerHTML = $(display).attr("data-value");
 	});
+}
+
+/** Populate the gameplay area with the appropriate role */
+function populateGameplayAre() {
+
 }
 
 /**
