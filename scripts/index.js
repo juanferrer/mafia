@@ -28,19 +28,7 @@ debug.error = function (msg) {
 	if (debug.dev) console.error(msg); // eslint-disable-line no-console
 };
 
-/**
- * Perform I18N in the whole page for the specified language code
- * @param {String} languageCode ISO 639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
- */
-function doI18N(languageCode) {
-	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
-		// Cache whatever language the user selected
-		i18n = I18N;
-		for (let key in I18N) {
-			$(`#${key}`).html(I18N[key]);
-		}
-	});
-}
+doI18N(languageCode);
 
 // #region API calls
 
@@ -143,6 +131,8 @@ function changeGameData(gameID, playerName, gameData) {
 }
 // #endregion
 
+// #region Other functions
+
 /**
  * Main function. It deals with changes in the server DB
  */
@@ -180,9 +170,11 @@ function updateGameState(data, status, request) {
 				playerRole = gameData.roles[playerName];
 				// Start the game
 				populateGameplayArea();
+				$(".lobby-area").css("display", "none");
 				$(".gameplay-area").css("display", "flex");
 				clearTimeout(refreshTimeout);
 				refreshTimeout = undefined;
+				return;
 			}
 		} else if ($(".gameplay-area").css("display") !== "none") {
 			// We're playing, so update the game according to the new data
@@ -253,6 +245,20 @@ function shuffle(arr) {
 }
 
 /**
+ * Perform I18N in the whole page for the specified language code
+ * @param {String} languageCode ISO 639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ */
+function doI18N(languageCode) {
+	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
+		// Cache whatever language the user selected
+		i18n = I18N;
+		for (let key in I18N) {
+			$(`#${key}`).html(I18N[key]);
+		}
+	});
+}
+
+/**
  * Assign roles to each player and return a gameData object
  * @param {string[]} players
  * @returns {any} gameData
@@ -319,10 +325,25 @@ function updateCounters() {
 	});
 }
 
+/**
+ * Get a random in between 0 and max
+ * @param {Number} max
+ * @returns {Number}
+ */
+function randomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
+
 /** Populate the gameplay area with the appropriate role */
 function populateGameplayArea() {
-	$("#role-title").html(i18n[`${playerRole}-role-title`]);
-	$("#role-title").html(i18n[`${playerRole}-role-description`]);
+	let lcRole = playerRole.toLowerCase();
+	$("#role-title-label").html(i18n["role-title-label"]);
+	$("#role-title").html(i18n[`${lcRole}-role-title`]);
+	// Populate with the appropriate image
+	$("#role-role-description").html(i18n[`${lcRole}-role-description`]);
+	$("#role-description").html(i18n[`${lcRole}-role-description`]);
+	// Get a random string from the flavour text array
+	$("#role-flavour-text").html(i18n[`${lcRole}-role-flavour-text`][randomInt(i18n[`${lcRole}-role-flavour-text`].length)]);
 }
 
 /**
@@ -345,6 +366,10 @@ function modifyCounter(counterButton, modifier) {
 
 	updateCounters();
 }
+
+// #endregion
+
+// #region Event handlers
 
 /** Using function to have access to this */
 $("#language-select").change(function () {
@@ -401,3 +426,5 @@ $(".counter-decrement-button").click((e) => {
 window.addEventListener("beforeunload", () => {
 	leaveGame(gameID, playerName);
 });
+
+// #endregion

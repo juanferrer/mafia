@@ -1,12 +1,25 @@
 {
-	"title": "Мафия",
-	"start-new-game-button": "НОВАЯ ИГРА",
-	"start-join-game-button": "ВСТУПИТЬ В ИГРУ",
+	"title": "Mafia",
+	"start-new-game-button": "NEW GAME",
+	"start-join-game-button": "JOIN GAME",
 	"new-game-button": "CREATE",
 	"new-game-back-button": "BACK",
-	"join-game-back-button": "BACK",
 	"join-game-button": "JOIN",
+	"join-game-back-button": "BACK",
 	"game-id-label": "Access code: ",
+	"mafioso-number-input-label": "Mafiosos",
+	"innocent-number-input-label": "Innocents",
 	"start-button": "START",
-	"close-button": "CLOSE"
+	"close-button": "CLOSE",
+	"role-title-label": "You are ",
+	"mafioso-role-title": "MAFIOSO",
+	"mafioso-role-description": "A MAFIOSO wakes up every night and can kill an INNOCENT.",
+	"mafioso-role-flavour-text": [
+		"FLAVOUR TEXT"
+	],
+	"innocent-role-title": "INNOCENT",
+	"innocent-role-description": "An INNOCENT is a poor victim. But careful, don't let your attention wander!",
+	"innocent-role-flavour-text": [
+		"FLAVOUR TEXT"
+	]
 }

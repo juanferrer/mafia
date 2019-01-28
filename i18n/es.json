@@ -4,9 +4,22 @@
 	"start-join-game-button": "UNIRSE",
 	"new-game-button": "CREAR",
 	"new-game-back-button": "ATRÁS",
-	"join-game-back-button": "ATRÁS",
 	"join-game-button": "UNIRSE",
+	"join-game-back-button": "ATRÁS",
 	"game-id-label": "Código de acceso: ",
+	"mafioso-number-input-label": "Mafiosos",
+	"innocent-number-input-label": "Inocentes",
 	"start-button": "EMPEZAR",
-	"close-button": "CERRAR"
+	"close-button": "CERRAR",
+	"role-title-label": "Tú eres ",
+	"mafioso-role-title": "MAFIOSO",
+	"mafioso-role-description": "Un MAFIOSO despierta cada noche y puede matar a un INOCENTE.",
+	"mafioso-role-flavour-text": [
+		"FLAVOUR TEXT"
+	],
+	"innocent-role-title": "INOCENTE",
+	"innocent-role-description": "Un INOCENTE es una pobre víctima. Pero cuidado, ¡no dejes vagar tu atención!",
+	"innocent-role-flavour-text": [
+		"FLAVOUR TEXT"
+	]
 }
