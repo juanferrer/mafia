@@ -211,6 +211,18 @@ button:focus:disabled {
 	font-size: 20px;
 }
 
+#role-title {
+	font-weight: bold;
+}
+
+.role-description {
+	text-align: center;
+}
+
+.role-flavour-text {
+	font-style: italic;
+}
+
 select {
 	outline: none;
 }

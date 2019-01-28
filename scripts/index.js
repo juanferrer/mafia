@@ -320,8 +320,9 @@ function updateCounters() {
 }
 
 /** Populate the gameplay area with the appropriate role */
-function populateGameplayAre() {
-
+function populateGameplayArea() {
+	$("#role-title").html(i18n[`${playerRole}-role-title`]);
+	$("#role-title").html(i18n[`${playerRole}-role-description`]);
 }
 
 /**
