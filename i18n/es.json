@@ -21,5 +21,10 @@
 	"innocent-role-description": "Un INOCENTE es una pobre víctima. Pero cuidado, ¡no dejes vagar tu atención!",
 	"innocent-role-flavour-text": [
 		"FLAVOUR TEXT"
+	],
+	"gm-role-title": "NARRADOR",
+	"gm-role-description": "El NARRADOR cuenta la historia y mantiene a los jugadores interesados.",
+	"gm-role-flavour-text": [
+		"FLAVOUR TEXT"
 	]
 }
