@@ -29,36 +29,36 @@ $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
+        $gameID = mysqli_real_escape_string($_POST['gameID']);
+        $playerName = mysqli_real_escape_string($_POST['playerName']);
         // Join the current game or create one if none exists
         joinGame($gameID, $playerName);
         break;
     case 'LEAVE':
         // Leave the current game
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
+        $gameID = mysqli_real_escape_string($_POST['gameID']);
+        $playerName = mysqli_real_escape_string($_POST['playerName']);
         //
         leaveGame($gameID, $playerName);
         break;
     case 'REFRESH':
         // Get the updated game state
-        $gameID = $_POST['gameID'];
+        $gameID = mysqli_real_escape_string($_POST['gameID']);
         //
         refreshGameState($gameID);
         break;
     case 'CHANGE':
         // Make changes to data
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
-        $newData = $_POST['newData'];
+        $gameID = mysqli_real_escape_string($_POST['gameID']);
+        $playerName = mysqli_real_escape_string($_POST['playerName']);
+        $newData = mysqli_real_escape_string($_POST['newData']);
         //
         changeGameData($gameID, $playerName, $newData);
         break;
     case 'SETACTIVE':
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
-        $active = $_POST['active'];
+        $gameID = mysqli_real_escape_string($_POST['gameID']);
+        $playerName = mysqli_real_escape_string($_POST['playerName']);
+        $active = mysqli_real_escape_string($_POST['active']);
         // Start/stop game and update date
         changeGameState($gameID, $playerName, $active);
 
