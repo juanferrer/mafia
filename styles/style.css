@@ -29,7 +29,7 @@ hr {
 .content-area {
 	width: 80vw;
 	height: 70vh;
-	/* box-shadow: 5px 5px 15px #aaaaaa; */
+	min-height: 350px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
