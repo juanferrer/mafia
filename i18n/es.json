@@ -6,6 +6,8 @@
 	"new-game-back-button": "ATRÁS",
 	"join-game-button": "UNIRSE",
 	"join-game-back-button": "ATRÁS",
+	"new-game-gameplay-button": "NUEVA PARTIDA",
+	"leave-gameplay-button": "SALIR",
 	"game-id-label": "Código de acceso: ",
 	"mafioso-number-input-label": "Mafiosos",
 	"innocent-number-input-label": "Inocentes",
@@ -26,5 +28,6 @@
 	"gm-role-description": "El NARRADOR cuenta la historia y mantiene a los jugadores interesados.",
 	"gm-role-flavour-text": [
 		"FLAVOUR TEXT"
-	]
+	],
+	"game-not-found-alert": "No se pudo encontrar la partida solicitada."
 }
