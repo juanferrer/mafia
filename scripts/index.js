@@ -260,9 +260,27 @@ function doI18N(languageCode) {
 	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
 		// Cache whatever language the user selected
 		i18n = I18N;
-		for (let key in I18N) {
-			$(`#${key}`).html(I18N[key]);
-		}
+
+		$("#title").html(i18n["title"]);
+		$("#start-new-game-button").html(i18n["new-game-button"]);
+		$("#start-join-game-button").html(i18n["join-game-button"]);
+		$("#new-game-button").html(i18n["create-button"]);
+		$("#new-game-back-button").html(i18n["back-button"]);
+		$("#join-game-button").html(i18n["join-button"]);
+		$("#join-game-back-button").html(i18n["back-button"]);
+		$("#new-game-gameplay-button").html(i18n["new-game-button"]);
+		$("#leave-gameplay-button").html(i18n["leave-button"]);
+		$("#game-id-label").html(i18n["game-id-label"]);
+		$("#mafioso-number-input-label").html(i18n["mafioso-number-input-label"]);
+		$("#innocent-number-input-label").html(i18n["innocent-number-input-label"]);
+		$("#start-button").html(i18n["start-button"]);
+		$("#close-button").html(i18n["close-button"]);
+		$("#role-title-label").html(i18n["role-title-label"]);
+		$("#game-not-found-alert").html(i18n["game-not-found-alert"]);
+
+		$("#new-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
+		$("#join-game-id").attr("placeholder", i18n["game-id-placeholder-label"]);
+		$("#join-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
 	});
 }
 
