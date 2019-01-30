@@ -49,9 +49,6 @@ doI18N(languageCode);
  * @param {String} playerName
  */
 function joinGame(gameID, playerName) {
-
-	// TODO: Validate playerName (only alphanumeric characters)
-
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
 		data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
@@ -59,13 +56,13 @@ function joinGame(gameID, playerName) {
 			debug.log("Request: " + request);
 			debug.log("Status: " + status);
 			debug.log("Error: " + error);
+			alert(i18n["game-not-found-alert"]);
 		},
 		success: goToLobby
 	});
 }
 
 function requestGameStateUpdate() {
-
 	$.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
 		type: "POST",
 		data: { "gameID": gameID, "type": "REFRESH" },
@@ -439,6 +436,18 @@ $(".counter-increment-button").click((e) => {
 
 $(".counter-decrement-button").click((e) => {
 	modifyCounter(e.currentTarget, -1);
+});
+
+$("#new-game-gameplay-button").click(() => {
+	$(".join-game-area").css("display", "flex");
+	$(".gameplay-area").css("display", "none");
+	requestGameStateUpdate();
+});
+
+$("#leave-gameplay-button").click(() => {
+	$(".button-area").css("display", "flex");
+	$(".gameplay-area").css("display", "none");
+	leaveGame(gameID, playerName);
 });
 
 window.addEventListener("beforeunload", () => {
