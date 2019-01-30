@@ -1,13 +1,13 @@
 {
 	"title": "Mafia",
-	"start-new-game-button": "NUEVA PARTIDA",
-	"start-join-game-button": "UNIRSE",
-	"new-game-button": "CREAR",
-	"new-game-back-button": "ATRÁS",
-	"join-game-button": "UNIRSE",
-	"join-game-back-button": "ATRÁS",
-	"new-game-gameplay-button": "NUEVA PARTIDA",
-	"leave-gameplay-button": "SALIR",
+	"new-game-button": "NUEVA PARTIDA",
+	"join-game-button": "UNIRSE A UNA PARTIDA",
+	"create-button": "CREAR",
+	"back-button": "ATRÁs",
+	"join-button": "UNISE",
+	"leave-button": "SALIR",
+	"name-placeholder-label": "Escribe tu nombre",
+	"game-id-placeholder-label": "Escriba el código de acceso",
 	"game-id-label": "Código de acceso: ",
 	"mafioso-number-input-label": "Mafiosos",
 	"innocent-number-input-label": "Inocentes",
@@ -15,19 +15,19 @@
 	"close-button": "CERRAR",
 	"role-title-label": "Tú eres ",
 	"mafioso-role-title": "MAFIOSO",
-	"mafioso-role-description": "Un MAFIOSO despierta cada noche y puede matar a un INOCENTE.",
+	"mafioso-role-description": "Un MAFIOSO se despierta cada noche y mata a un INOCENTE.",
 	"mafioso-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
 	"innocent-role-title": "INOCENTE",
-	"innocent-role-description": "Un INOCENTE es una pobre víctima. Pero cuidado, ¡no dejes vagar tu atención!",
+	"innocent-role-description": "Un INOCENTE es una pobre víctima. Pero, ¡cuidado! No bajes la guardia.",
 	"innocent-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
 	"gm-role-title": "NARRADOR",
-	"gm-role-description": "El NARRADOR cuenta la historia y mantiene a los jugadores interesados.",
+	"gm-role-description": "El NARRADOR cuenta la historia y mantiene a los jugadores involucrados.",
 	"gm-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
-	"game-not-found-alert": "No se pudo encontrar la partida solicitada."
+	"game-not-found-alert": "No se pudo encontrar la partida solicitada"
 }
