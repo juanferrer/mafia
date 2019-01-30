@@ -17,6 +17,16 @@ let players = [];
 let gameData = {};
 let playerRole = "";
 
+// Every time a new translation is added, the name of the language needs to
+// be added to this object in the following form:
+// language-code: native-name
+// (e.g. en: "English", es: "Español")
+let languages = {
+	en: "English",
+	es: "Español",
+	ru: "Русский",
+};
+
 let debug = {
 	dev: true,
 };
@@ -28,6 +38,7 @@ debug.error = function (msg) {
 	if (debug.dev) console.error(msg); // eslint-disable-line no-console
 };
 
+populateLanguageSelect();
 doI18N(languageCode);
 
 // #region API calls
@@ -256,6 +267,13 @@ function doI18N(languageCode) {
 			$(`#${key}`).html(I18N[key]);
 		}
 	});
+}
+
+/** Populate language-select with the available translations */
+function populateLanguageSelect() {
+	for (let lang in languages) {
+		$("#language-select").append(`<option value="${lang}">${languages[lang]}</option>`);
+	}
 }
 
 /**
