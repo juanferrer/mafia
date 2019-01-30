@@ -1,33 +1,33 @@
 {
-	"title": "Mafia",
-	"new-game-button": "NEW GAME",
-	"join-game-button": "JOIN GAME",
-	"create-button": "CREATE",
-	"back-button": "BACK",
-	"join-button": "JOIN",
-	"leave-button": "LEAVE",
+	"title": "Мафия",
+	"new-game-button": "НОВАЯ ИГРА",
+	"join-game-button": "ВСТУПИТЬ В ИГРУ",
+	"create-button": "СОЗДАТЬ ИГРУ",
+	"back-button": "НАЗАД",
+	"join-button": "ПРИСОЕДИНЯТЬ",
+	"leave-button": "ОСТАВИТЬ",
 	"name-placeholder-label": "Введите имя",
-	"game-id-placeholder-label": "Enter access code",
-	"game-id-label": "Access code: ",
-	"mafioso-number-input-label": "Mafiosos",
-	"innocent-number-input-label": "Innocents",
-	"start-button": "START",
-	"close-button": "CLOSE",
-	"role-title-label": "You are ",
-	"mafioso-role-title": "MAFIOSO",
+	"game-id-placeholder-label": "Введите код доступа",
+	"game-id-label": "Код доступа: ",
+	"mafioso-number-input-label": "Мафиози",
+	"innocent-number-input-label": "Обыватели",
+	"start-button": "ПУСК",
+	"close-button": "ЗАКРЫТЬ",
+	"role-title-label": "Ты ",
+	"mafioso-role-title": "МАФИОЗИ",
 	"mafioso-role-description": "A MAFIOSO wakes up every night and can kill an INNOCENT.",
 	"mafioso-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
-	"innocent-role-title": "INNOCENT",
+	"innocent-role-title": "ОБЫВАТЕЛЬ",
 	"innocent-role-description": "An INNOCENT is a poor victim. But careful, don't let your attention wander!",
 	"innocent-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
-	"gm-role-title": "NARRATOR",
+	"gm-role-title": "ВЕДУЩИЙ",
 	"gm-role-description": "The NARRATOR tells the story and keeps players engaged.",
 	"gm-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
-	"game-not-found-alert": "Unable to find requested game"
+	"game-not-found-alert": "Не удалось найти запрошенное игру"
 }

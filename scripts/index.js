@@ -279,7 +279,7 @@ function doI18N(languageCode) {
 		$("#game-not-found-alert").html(i18n["game-not-found-alert"]);
 
 		$("#new-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
-		$("#join-game-id").attr("placeholder", i18n["game-id-placeholder-label"]);
+		$("#join-game-id-input").attr("placeholder", i18n["game-id-placeholder-label"]);
 		$("#join-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
 	});
 }
