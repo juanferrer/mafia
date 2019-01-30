@@ -9,9 +9,9 @@ mb_language('uni');
 header('Access-Control-Allow-Origin: juanferrer.github.io');
 header('Access-Control-Allow-Origin: *');
 
-define('DB_NAME', 'id2777537_mafia_db');
-define('DB_USERNAME', 'id2777537_crazy_maniac');
-define('DB_PASSWORD', '%h$4Cb1LlXhj');
+define('DB_NAME', 'DATABASE');
+define('DB_USERNAME', 'USERNAME');
+define('DB_PASSWORD', 'PASSWORD');
 
 define('SLEEP_TIME', 5);
 
@@ -29,36 +29,36 @@ $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
+        $gameID = escapeString($_POST['gameID']);
+        $playerName = escapeString($_POST['playerName']);
         // Join the current game or create one if none exists
         joinGame($gameID, $playerName);
         break;
     case 'LEAVE':
         // Leave the current game
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
+        $gameID = escapeString($_POST['gameID']);
+        $playerName = escapeString($_POST['playerName']);
         //
         leaveGame($gameID, $playerName);
         break;
     case 'REFRESH':
         // Get the updated game state
-        $gameID = $_POST['gameID'];
+        $gameID = escapeString($_POST['gameID']);
         //
         refreshGameState($gameID);
         break;
     case 'CHANGE':
         // Make changes to data
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
-        $newData = $_POST['newData'];
+        $gameID = escapeString($_POST['gameID']);
+        $playerName = escapeString($_POST['playerName']);
+        $newData = escapeString($_POST['newData']);
         //
         changeGameData($gameID, $playerName, $newData);
         break;
     case 'SETACTIVE':
-        $gameID = $_POST['gameID'];
-        $playerName = $_POST['playerName'];
-        $active = $_POST['active'];
+        $gameID = escapeString($_POST['gameID']);
+        $playerName = escapeString($_POST['playerName']);
+        $active = escapeString($_POST['active']);
         // Start/stop game and update date
         changeGameState($gameID, $playerName, $active);
 
@@ -304,6 +304,7 @@ function newGameID()
     return randomString();
 }
 
+// Check if the player is the GM
 function playerIsGM($gameID, $playerName)
 {
     $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -328,6 +329,20 @@ function playerIsGM($gameID, $playerName)
     $isGM = $data['gmName'] === $playerName;
 
     return $isGM;
+}
+
+// To avoid any code injection, we will escape:
+// ' (single quote)
+// " (double quote)
+// \ (backslash)
+// $ (dollar sign)
+function escapeString($string)
+{
+    if (is_array($string)) {
+        return $string;
+    }
+
+    return $escapedString = str_replace('$', '\\$', addslashes($string));
 }
 
 //endregion
