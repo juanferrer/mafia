@@ -221,6 +221,7 @@ button:focus:disabled {
 .role-flavour-text {
 	font-style: italic;
 	text-align: start;
+	display: none;
 }
 
 select {
