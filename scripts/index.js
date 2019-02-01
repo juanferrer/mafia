@@ -40,6 +40,7 @@ debug.error = function (msg) {
 };
 
 populateLanguageSelect();
+loadSettings();
 doI18N(languageCode);
 
 // #region API calls
@@ -401,12 +402,18 @@ function modifyCounter(counterButton, modifier) {
 	updateCounters();
 }
 
+function loadSettings() {
+
+}
+
 function changeTheme(newTheme) {
 	if ($("body").hasClass(theme)) {
 		$("body").removeClass(theme);
 	}
 	$("body").addClass(newTheme);
 	theme = newTheme;
+	// Store new theme
+	localStorage.setItem("mafiaTheme", theme);
 }
 
 // #endregion
