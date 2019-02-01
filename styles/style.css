@@ -1,14 +1,37 @@
 :root {
 	--main-color: #222;
-	--secondary-color: #888;
-	--main-bg-color: #ddd;
+	--border-color: #888;
+	--bg-color: #fff;
 	--accent-color: #a1f;
-	--text-color: #777;
 	--small-text-color: #999;
 	--button-disabled-color: #88888844;
 }
 
 /* TOOD: Set two themes here by changing the colours of some basic elements */
+
+.theme-light {
+	--main-color: #222;
+	--border-color: #888;
+	--bg-color: #fff;
+	--accent-color: #a1f;
+	--small-text-color: #999;
+	--button-disabled-color: #88888844;
+}
+
+.theme-dark {
+	--main-color: #eee;
+	--border-color: #888;
+	--bg-color: #333;
+	--accent-color: #a1f;
+	--small-text-color: #666;
+	--button-disabled-color: #77777744;
+}
+
+* {
+	transition-property: background-color, color;
+	transition-duration: 0.1s;
+	transition-timing-function: ease-in-out;
+}
 
 body {
 	margin: 0;
@@ -18,17 +41,21 @@ body {
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	transition: all 0.5s ease-in-out;
+	font-family: 'Rubik', sans-serif;
+	color: var(--main-color);
+	background-color: var(--bg-color);
 }
 
 hr {
 	width: 100%;
-	border-top: 1px solid var(--secondary-color);
+	border-top: 1px solid var(--border-color);
+	border-bottom: none;
 }
 
 .content-area {
 	width: 80vw;
 	height: 70vh;
+	max-width: 400px;
 	min-height: 350px;
 	display: flex;
 	flex-direction: column;
@@ -56,10 +83,12 @@ hr {
 
 button {
 	background-color: transparent;
-	border-color: var(--secondary-color);
+	border-color: var(--border-color);
 	border-style: solid;
 	border-width: 1px;
 	outline: none;
+	text-transform: uppercase;
+	color: var(--main-color);
 }
 
 button:focus {
@@ -167,7 +196,7 @@ button:focus:disabled {
 	width: 50%;
 	margin: 0;
 	background-color: transparent;
-	border-color: var(--secondary-color);
+	border-color: var(--border-color);
 	border-style: solid;
 	border-top-left-radius: 5px;
 	border-bottom-left-radius: 5px;
@@ -213,6 +242,11 @@ button:focus:disabled {
 
 #role-title {
 	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.role-name {
+	text-transform: uppercase;
 }
 
 .role-description {
@@ -237,7 +271,7 @@ input[type="text"] {
 	outline: none;
 	padding: 10px;
 	width: 45%;
-	border-color: var(--secondary-color);
+	border-color: var(--border-color);
 	border-style: solid;
 	border-radius: 5px;
 	border-width: 1px;

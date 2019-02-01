@@ -16,6 +16,7 @@ let i18n = {};
 let players = [];
 let gameData = {};
 let playerRole = "";
+let theme = "theme-light";
 
 // Every time a new translation is added, the name of the language needs to
 // be added to this object in the following form:
@@ -398,6 +399,14 @@ function modifyCounter(counterButton, modifier) {
 	}
 
 	updateCounters();
+}
+
+function changeTheme(newTheme) {
+	if ($("body").hasClass(theme)) {
+		$("body").removeClass(theme);
+	}
+	$("body").addClass(newTheme);
+	theme = newTheme;
 }
 
 // #endregion
