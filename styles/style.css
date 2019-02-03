@@ -54,7 +54,7 @@ hr {
 
 .content-area {
 	width: 80vw;
-	height: 70vh;
+	height: 90vh;
 	max-width: 400px;
 	min-height: 350px;
 	display: flex;
@@ -131,10 +131,12 @@ button:focus:disabled {
 
 .new-game-area {
 	height: 35%;
+	min-height: 100px;
 }
 
 .join-game-area {
 	height: 35%;
+	min-height: 150px;
 }
 
 .lobby-area {
@@ -157,7 +159,7 @@ button:focus:disabled {
 	display: flex;
 	flex-direction: row;
 	width: 75%;
-	height: 75%;
+	height: 25%;
 	flex-wrap: wrap;
 	overflow-y: auto;
 	align-content: flex-start;
@@ -169,16 +171,19 @@ button:focus:disabled {
 }
 
 .settings {
-	height: 100%;
 	width: 90%;
+	height: 45%;
+	flex-wrap: wrap;
 	flex-direction: row;
 	justify-content: center;
 	display: none;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .label-counter-pair {
 	width: 50%;
-	height: 100%;
+	min-height: 100px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -206,6 +211,11 @@ button:focus:disabled {
 	justify-content: center;
 }
 
+#innocent-counter-display {
+	width: 100%;
+	border-radius: 5px;
+}
+
 .counter-button-pair {
 	display: flex;
 	flex-direction: column;
@@ -225,6 +235,28 @@ button:focus:disabled {
 .counter-decrement-button {
 	border-bottom-right-radius: 5px;
 	border-top: none;
+}
+
+.role-checkbox-container {
+	width: 100%;
+	margin-left: 30px;
+	flex-wrap: wrap;
+	display: flex;
+	flex-direction: row;
+}
+
+.role-checkbox {
+	width: calc(100% - 4px);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 2px;
+}
+
+@media (min-width: 768px) {
+	.role-checkbox {
+		width: calc(50% - 4px);
+	}
 }
 
 #start-button {

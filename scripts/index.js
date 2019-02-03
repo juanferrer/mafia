@@ -3,6 +3,21 @@
 const Roles = Object.freeze({
 	MAFIOSO: "MAFIOSO",
 	INNOCENT: "INNOCENT",
+	DETECTIVE: "DETECTIVE",
+	DOCTOR: "DOCTOR",
+	WITNESS: "WITNESS",
+	JAILER: "JAILER",
+	VIGILANTE: "VIGILANTE",
+	GODFATHER: "GODFATHER",
+	MEDIUM: "MEDIUM",
+	BODYGUARD: "BODYGUARD",
+	OUTSIDER: "OUTSIDER",
+	CULTLEADER: "CULTLEADER",
+	LOVER: "LOVER",
+	SUICIDAL: "SUICIDAL",
+	KILLER: "KILLER",
+	WARVETERAN: "WARVETERAN",
+	SNITCH: "SNITCH"
 });
 
 let gameID = "";
@@ -144,6 +159,33 @@ function changeGameData(gameID, playerName, gameData) {
 // #region Other functions
 
 /**
+ * Get the number of roles selected
+ * @returns {Number}
+ */
+function calculateRoles() {
+	let numberOfRoles = parseInt($("#mafioso-counter-display").attr("data-value"));
+
+	if ($("#detective-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#doctor-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#witness-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#jailer-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#vigilante-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#godfather-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#medium-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#bodyguard-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#cultleader-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#snitch-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#lovers-role-checkbox").is(":checked")) numberOfRoles += 2;
+	if ($("#killer-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#suicidal-role-checkbox").is(":checked"))++numberOfRoles;
+	if ($("#warveteran-role-checkbox").is(":checked"))++numberOfRoles;
+
+	debug.log(numberOfRoles);
+
+	return numberOfRoles;
+}
+
+/**
  * Main function. It deals with changes in the server DB
  */
 function updateGameState(data, status, request) {
@@ -167,13 +209,24 @@ function updateGameState(data, status, request) {
 			$("#players-list").html("");
 
 			if (newPlayers) {
-				newPlayers.forEach(p => {
+				players = newPlayers;
+				players.forEach(p => {
 					$("#players-list").append(`<span>${p}</span>`);
 				});
+
+				// Update the number of innocent players. Innocent display should
+				// be the number of players that have no special role
+				let unassignedRoles = players.length - calculateRoles() - 1;
+				$("#innocent-counter-display").attr("data-value", unassignedRoles);
+				updateCounters();
+
+				if (unassignedRoles < 0) {
+					$("#start-button").attr("disabled", true);
+				} else {
+					$("#start-button").removeAttr("disabled");
+				}
 			}
 
-			players = newPlayers;
-			updateCounters();
 
 			if (isPlaying) {
 				// First, get our role
@@ -283,6 +336,13 @@ function doI18N(languageCode) {
 		$("#new-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
 		$("#join-game-id-input").attr("placeholder", i18n["game-id-placeholder-label"]);
 		$("#join-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
+
+		if (playerRole) {
+			let lcRole = playerRole.toLowerCase();
+			// Populate the strings for the role too if one is assigned
+			$("#role-role-description").html(i18n[`${lcRole}-role-description`]);
+			$("#role-description").html(i18n[`${lcRole}-role-description`]);
+		}
 	});
 }
 
@@ -304,12 +364,30 @@ function assignRoles(players) {
 	};
 	let rolesArray = [];
 
+	// Assign mafiosi
 	let mafiosoNumber = parseInt($("#mafioso-counter-display").attr("data-value"));
 	for (let i = 0; i < mafiosoNumber; ++i) {
 		rolesArray.push(Roles.MAFIOSO);
 	}
-	let innocentNumber = parseInt($("#innocent-counter-display").attr("data-value"));
-	for (let i = 0; i < innocentNumber; ++i) {
+
+	// Assign other roles
+	if ($("#detective-role-checkbox").is(":checked")) rolesArray.push(Roles.DETECTIVE);
+	if ($("#doctor-role-checkbox").is(":checked")) rolesArray.push(Roles.DOCTOR);
+	if ($("#witness-role-checkbox").is(":checked")) rolesArray.push(Roles.WITNESS);
+	if ($("#jailer-role-checkbox").is(":checked")) rolesArray.push(Roles.JAILER);
+	if ($("#vigilante-role-checkbox").is(":checked")) rolesArray.push(Roles.VIGILANTE);
+	if ($("#godfather-role-checkbox").is(":checked")) rolesArray.push(Roles.GODFATHER);
+	if ($("#medium-role-checkbox").is(":checked")) rolesArray.push(Roles.MEDIUM);
+	if ($("#bodyguard-role-checkbox").is(":checked")) rolesArray.push(Roles.BODYGUARD);
+	if ($("#cultleader-role-checkbox").is(":checked")) rolesArray.push(Roles.CULTLEADER);
+	if ($("#snitch-role-checkbox").is(":checked")) rolesArray.push(Roles.SNITCH);
+	if ($("#lovers-role-checkbox").is(":checked")) rolesArray.push(Roles.LOVER); rolesArray.push(Roles.LOVER);
+	if ($("#killer-role-checkbox").is(":checked")) rolesArray.push(Roles.KILLER);
+	if ($("#suicidal-role-checkbox").is(":checked")) rolesArray.push(Roles.SUICIDAL);
+	if ($("#warveteran-role-checkbox").is(":checked")) rolesArray.push(Roles.WARVETERAN);
+
+	// Everyone that is not another role, is innocent
+	for (let i = 0, playersNumber = players.length - rolesArray.length; i < playersNumber; ++i) {
 		rolesArray.push(Roles.INNOCENT);
 	}
 
@@ -333,20 +411,17 @@ function updateCounters() {
 	$(".counter-button").each((index, counterButton) => {
 		let display = $(`#${counterButton.getAttribute("data-display")}`);
 		let number = parseInt(display.attr("data-value"));
-		let totalRoles = players.length - 1; // -1 because the GM is actually not playing
-		let rolesAssigned = 0;
-		$(".counter-display").toArray().forEach(v => {
-			rolesAssigned += parseInt(v.getAttribute("data-value"));
-		});
+
+		let rolesUnassigned = parseInt($("#innocent-counter-display").attr("data-value"));
 
 		if (counterButton.classList.contains("counter-increment-button")) {
-			if (rolesAssigned >= totalRoles) {
+			if (rolesUnassigned <= 0) {
 				counterButton.setAttribute("disabled", true);
 			} else {
 				counterButton.removeAttribute("disabled");
 			}
 		} else if (counterButton.classList.contains("counter-decrement-button")) {
-			if (rolesAssigned <= 0 || number <= 0) {
+			if (number <= 0) {
 				counterButton.setAttribute("disabled", true);
 			} else {
 				counterButton.removeAttribute("disabled");
@@ -374,7 +449,7 @@ function populateGameplayArea() {
 	let lcRole = playerRole.toLowerCase();
 	$("#role-title-label").html(i18n["role-title-label"]);
 	$("#role-title").html(i18n[`${lcRole}-role-title`]);
-	// Populate with the appropriate image
+	// TODO: Populate with the appropriate image
 	$("#role-role-description").html(i18n[`${lcRole}-role-description`]);
 	$("#role-description").html(i18n[`${lcRole}-role-description`]);
 	// Get a random string from the flavour text array
