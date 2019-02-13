@@ -21,7 +21,7 @@
 	"bodyguard-role-checkbox-label": "Bodyguard",
 	"cultleader-role-checkbox-label": "Cult Leader",
 	"snitch-role-checkbox-label": "Snitch",
-	"lovers-role-checkbox-label": "Lovers",
+	"cupid-role-checkbox-label": "Cupid",
 	"killer-role-checkbox-label": "Killer",
 	"suicidal-role-checkbox-label": "Suicidal",
 	"warveteran-role-checkbox-label": "War Veteran",
@@ -93,9 +93,9 @@
 	"snitch-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
-	"lovers-role-title": "Lovers",
-	"lovers-role-description": "The <span class='role-name'>Lovers</span> wake up the first night to meet. They win when they are the only two players left.",
-	"lovers-role-flavour-text": [
+	"cupid-role-title": "Lovers",
+	"cupid-role-description": "The <span class='role-name'>Lovers</span> wake up the first night to meet. They win when they are the only two players left.",
+	"cupid-role-flavour-text": [
 		"FLAVOUR TEXT"
 	],
 	"killer-role-title": "Killer",
