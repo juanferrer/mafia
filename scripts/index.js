@@ -23,7 +23,6 @@ const Roles = Object.freeze({
 let gameID = "";
 let playerName = "";
 let isGM = false;
-let languageCode = "en";
 let refreshTime = 2000;
 let refreshTimeout;
 let failedAttempts = 0;
@@ -31,7 +30,11 @@ let i18n = {};
 let players = [];
 let gameData = {};
 let playerRole = "";
-let theme = "theme-light";
+
+let settings = {
+	languageCode: "en",
+	theme: "theme-dark"
+};
 
 // Every time a new translation is added, the name of the language needs to
 // be added to this object in the following form:
@@ -56,7 +59,7 @@ debug.error = function (msg) {
 
 populateLanguageSelect();
 loadSettings();
-doI18N(languageCode);
+doI18N(settings.languageCode);
 
 // #region API calls
 
@@ -309,7 +312,7 @@ function shuffle(arr) {
 
 /**
  * Perform I18N in the whole page for the specified language code
- * @param {String} languageCode ISO 639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ * @param {String} languageCode [ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
  */
 function doI18N(languageCode) {
 	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
@@ -477,18 +480,39 @@ function modifyCounter(counterButton, modifier) {
 	updateCounters();
 }
 
+/** Load the settings from local storage */
 function loadSettings() {
-
+	let jsonSettings = localStorage.getItem("settings");
+	try {
+		settings = JSON.parse(jsonSettings);
+	} catch (e) {
+		debug.log("String is not valid JSON");
+		// No point storing it then
+		localStorage.removeItem("mafiaSettings");
+		settings = {};
+	}
 }
 
+/** Store the settings for later use */
+function updateSettings() {
+	localStorage.setItem("mafiaSettings", JSON.stringify(settings));
+}
+
+/**
+ * Change the theme of the app
+ * @param {string} newTheme theme-light or theme-dark
+ */
 function changeTheme(newTheme) {
-	if ($("body").hasClass(theme)) {
-		$("body").removeClass(theme);
+	if (settings.theme != newTheme) {
+
+		if ($("body").hasClass(settings.theme)) {
+			$("body").removeClass(settings.theme);
+		}
+		$("body").addClass(newTheme);
+		settings.theme = newTheme;
+		// Store new theme
+		updateSettings();
 	}
-	$("body").addClass(newTheme);
-	theme = newTheme;
-	// Store new theme
-	localStorage.setItem("mafiaTheme", theme);
 }
 
 // #endregion
@@ -497,8 +521,9 @@ function changeTheme(newTheme) {
 
 /** Using function to have access to this */
 $("#language-select").change(function () {
-	languageCode = this.value;
-	doI18N(languageCode);
+	settings.languageCode = this.value;
+	updateSettings();
+	doI18N(settings.languageCode);
 });
 
 $("#start-new-game-button").click(() => {
