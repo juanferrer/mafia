@@ -394,7 +394,7 @@ function assignRoles(players) {
 	if ($("#warveteran-role-checkbox").is(":checked")) rolesArray.push(Roles.WARVETERAN);
 
 	// Everyone that is not another role, is innocent
-	for (let i = 0, playersNumber = players.length - rolesArray.length; i < playersNumber; ++i) {
+	for (let i = 0, playersNumber = players.length - 1 - rolesArray.length; i < playersNumber; ++i) {
 		rolesArray.push(Roles.INNOCENT);
 	}
 
@@ -466,7 +466,7 @@ function populateGameplayArea() {
 	if (isGM) {
 		$("#players-list-gameplay-area").html("");
 		players.forEach(p => {
-			$("#players-list-gameplay-area").append(`<span class='clickable-player-element'>${p}</span>`);
+			$("#players-list-gameplay-area").append(`<span onclick="showPlayerCard('${p}')">${p}</span>`);
 		});
 	}
 }
@@ -529,6 +529,20 @@ function changeTheme(newTheme) {
 	}
 }
 
+/**
+ * Populate the player card with player's info and show
+ * @param {string} name
+ */
+function showPlayerCard(name) {
+	if (name) {
+		let lcRole = gameData.roles[name].toLowerCase();
+		$("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
+		$("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
+		$("#role-description-player-card").html(i18n[`${lcRole}-role-description`]);
+		$(".player-id-card").css("visibility", "visible");
+	}
+}
+
 // #endregion
 
 // #region Event handlers
@@ -584,16 +598,6 @@ $(".counter-increment-button").click((e) => {
 
 $(".counter-decrement-button").click((e) => {
 	modifyCounter(e.currentTarget, -1);
-});
-
-$(".clickable-player-element").click((e) => {
-	if (e.currentTarget.innerHTML) {
-		let lcRole = gameData.roles[e.currentTarget.innerHTML].toLowerCase();
-		$("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
-		$("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
-		$("#role-role-description-player-card").html(i18n[`${lcRole}-role-description`]);
-		$(".player-id-card").css("visibility", "visible");
-	}
 });
 
 $("#close-player-card-button").click(() => {

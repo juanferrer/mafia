@@ -297,7 +297,7 @@ button:focus:disabled {
 	width: 75%;
 	max-width: 300px;
 	height: 55%;
-	height: 350px;
+	max-height: 350px;
 	border-width: 1px;
 	border-style: solid;
 	border-color: var(--border-color);
@@ -310,9 +310,9 @@ button:focus:disabled {
 	align-items: center;
 }
 
-.clickable-player-element {}
-
-.clickable-player-element:hover {}
+#players-list-gameplay-area span:hover {
+	color: var(--accent-color);
+}
 
 select {
 	outline: none;
