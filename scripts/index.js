@@ -13,7 +13,7 @@ const Roles = Object.freeze({
 	BODYGUARD: "BODYGUARD",
 	OUTSIDER: "OUTSIDER",
 	CULTLEADER: "CULTLEADER",
-	LOVER: "LOVER",
+	CUPID: "CUPID",
 	SUICIDAL: "SUICIDAL",
 	KILLER: "KILLER",
 	WARVETERAN: "WARVETERAN",
@@ -179,7 +179,7 @@ function calculateRoles() {
 	if ($("#bodyguard-role-checkbox").is(":checked"))++numberOfRoles;
 	if ($("#cultleader-role-checkbox").is(":checked"))++numberOfRoles;
 	if ($("#snitch-role-checkbox").is(":checked"))++numberOfRoles;
-	if ($("#lovers-role-checkbox").is(":checked")) numberOfRoles += 2;
+	if ($("#cupid-role-checkbox").is(":checked"))++numberOfRoles;
 	if ($("#killer-role-checkbox").is(":checked"))++numberOfRoles;
 	if ($("#suicidal-role-checkbox").is(":checked"))++numberOfRoles;
 	if ($("#warveteran-role-checkbox").is(":checked"))++numberOfRoles;
@@ -388,7 +388,7 @@ function assignRoles(players) {
 	if ($("#bodyguard-role-checkbox").is(":checked")) rolesArray.push(Roles.BODYGUARD);
 	if ($("#cultleader-role-checkbox").is(":checked")) rolesArray.push(Roles.CULTLEADER);
 	if ($("#snitch-role-checkbox").is(":checked")) rolesArray.push(Roles.SNITCH);
-	if ($("#lovers-role-checkbox").is(":checked")) rolesArray.push(Roles.LOVER); rolesArray.push(Roles.LOVER);
+	if ($("#cupid-role-checkbox").is(":checked")) rolesArray.push(Roles.CUPID);
 	if ($("#killer-role-checkbox").is(":checked")) rolesArray.push(Roles.KILLER);
 	if ($("#suicidal-role-checkbox").is(":checked")) rolesArray.push(Roles.SUICIDAL);
 	if ($("#warveteran-role-checkbox").is(":checked")) rolesArray.push(Roles.WARVETERAN);
@@ -466,7 +466,7 @@ function populateGameplayArea() {
 	if (isGM) {
 		$("#players-list-gameplay-area").html("");
 		players.forEach(p => {
-			$("#players-list").append(`<span class='clickable-player-element'>${p}</span>`);
+			$("#players-list-gameplay-area").append(`<span class='clickable-player-element'>${p}</span>`);
 		});
 	}
 }
@@ -591,7 +591,6 @@ $(".clickable-player-element").click((e) => {
 		let lcRole = gameData.roles[e.currentTarget.innerHTML].toLowerCase();
 		$("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
 		$("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
-		// TODO: Populate with the appropriate image
 		$("#role-role-description-player-card").html(i18n[`${lcRole}-role-description`]);
 		$(".player-id-card").css("visibility", "visible");
 	}
