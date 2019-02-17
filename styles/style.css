@@ -282,8 +282,8 @@ button:focus:disabled {
 }
 
 .role-description {
-	padding: 5px;
 	text-align: start;
+	width: 80%;
 }
 
 .role-flavour-text {
