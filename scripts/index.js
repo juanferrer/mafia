@@ -336,6 +336,8 @@ function doI18N(languageCode) {
 		$("#start-button").html(i18n["start-button"]);
 		$("#close-button").html(i18n["close-button"]);
 		$("#role-title-label").html(i18n["role-title-label"]);
+		$("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
+		$("#close-player-card-button").html(i18n["close-button"]);
 		$("#game-not-found-alert").html(i18n["game-not-found-alert"]);
 
 		$("#new-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
@@ -459,6 +461,14 @@ function populateGameplayArea() {
 	$("#role-description").html(i18n[`${lcRole}-role-description`]);
 	// Get a random string from the flavour text array
 	$("#role-flavour-text").html(i18n[`${lcRole}-role-flavour-text`][randomInt(i18n[`${lcRole}-role-flavour-text`].length)]);
+
+	// For GM, add a player list
+	if (isGM) {
+		$("#players-list-gameplay-area").html("");
+		players.forEach(p => {
+			$("#players-list").append(`<span class='clickable-player-element'>${p}</span>`);
+		});
+	}
 }
 
 /**
@@ -574,6 +584,21 @@ $(".counter-increment-button").click((e) => {
 
 $(".counter-decrement-button").click((e) => {
 	modifyCounter(e.currentTarget, -1);
+});
+
+$(".clickable-player-element").click((e) => {
+	if (e.currentTarget.innerHTML) {
+		let lcRole = gameData.roles[e.currentTarget.innerHTML].toLowerCase();
+		$("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
+		$("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
+		// TODO: Populate with the appropriate image
+		$("#role-role-description-player-card").html(i18n[`${lcRole}-role-description`]);
+		$(".player-id-card").css("visibility", "visible");
+	}
+});
+
+$("#close-player-card-button").click(() => {
+	$(".player-id-card").css("visibility", "hidden");
 });
 
 $("#new-game-gameplay-button").click(() => {

@@ -272,7 +272,7 @@ button:focus:disabled {
 	font-size: 20px;
 }
 
-#role-title {
+.role-title {
 	font-weight: bold;
 	text-transform: uppercase;
 }
@@ -282,6 +282,7 @@ button:focus:disabled {
 }
 
 .role-description {
+	padding: 5px;
 	text-align: start;
 }
 
@@ -290,6 +291,28 @@ button:focus:disabled {
 	text-align: start;
 	display: none;
 }
+
+.player-id-card {
+	position: absolute;
+	width: 75%;
+	max-width: 300px;
+	height: 55%;
+	height: 350px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--border-color);
+	border-radius: 5px;
+	background-color: var(--bg-color);
+	display: flex;
+	visibility: hidden;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.clickable-player-element {}
+
+.clickable-player-element:hover {}
 
 select {
 	outline: none;
