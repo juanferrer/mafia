@@ -28,6 +28,7 @@
     "start-button": "Start",
     "close-button": "Close",
     "role-title-label": "You are ",
+    "role-title-label-player-card": "Player is ",
     "gm-role-title": "Narrator",
     "gm-role-description": "The <span class='role-name'>Narrator</span> tells the story and keeps players engaged.",
     "gm-role-flavour-text": [

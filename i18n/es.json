@@ -28,6 +28,7 @@
     "start-button": "Empezar",
     "close-button": "Cerrar",
     "role-title-label": "Tú eres ",
+    "role-title-label-player-card": "El jugador es ",
     "gm-role-title": "Narrador",
     "gm-role-description": "El <span class='role-name'>Narrador</span> cuenta la historia y mantiene a los jugadores interesados.",
     "gm-role-flavour-text": [

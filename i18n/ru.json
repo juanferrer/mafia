@@ -28,6 +28,7 @@
 	"start-button": "Пуск",
 	"close-button": "Закрыть",
 	"role-title-label": "Ты ",
+	"role-title-label-player-card": "Player is ",
 	"gm-role-title": "Ведущий",
 	"gm-role-description": "The <span class='role-name'>NARRATOR</span> tells the story and keeps players engaged.",
 	"gm-role-flavour-text": [
