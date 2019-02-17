@@ -60,6 +60,7 @@ debug.error = function (msg) {
 populateLanguageSelect();
 loadSettings();
 doI18N(settings.languageCode);
+changeTheme(settings.theme);
 
 // #region API calls
 
@@ -315,6 +316,7 @@ function shuffle(arr) {
  * @param {String} languageCode [ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
  */
 function doI18N(languageCode) {
+	if (!languageCode) languageCode = "en";
 	$.getJSON(`i18n/${languageCode.toLowerCase()}.json`, I18N => {
 		// Cache whatever language the user selected
 		i18n = I18N;
@@ -482,14 +484,16 @@ function modifyCounter(counterButton, modifier) {
 
 /** Load the settings from local storage */
 function loadSettings() {
-	let jsonSettings = localStorage.getItem("settings");
+	let jsonSettings = localStorage.getItem("mafiaSettings");
 	try {
-		settings = JSON.parse(jsonSettings);
+		if (jsonSettings) {
+			settings = JSON.parse(jsonSettings);
+		}
 	} catch (e) {
 		debug.log("String is not valid JSON");
 		// No point storing it then
 		localStorage.removeItem("mafiaSettings");
-		settings = {};
+		// Use the current definition of settings (above)
 	}
 }
 
