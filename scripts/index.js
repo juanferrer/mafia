@@ -20,6 +20,11 @@ const Roles = Object.freeze({
     SNITCH: "SNITCH"
 });
 
+const Themes = Object.freeze({
+    LIGHT: "theme-light",
+    DARK: "theme-dark"
+});
+
 let gameID = "";
 let playerName = "";
 let isGM = false;
@@ -33,7 +38,7 @@ let playerRole = "";
 
 let settings = {
     languageCode: "en",
-    theme: "theme-dark"
+    theme: Themes.DARK
 };
 
 // Every time a new translation is added, the name of the language needs to
@@ -517,22 +522,20 @@ function updateSettings() {
  * @param {string} newTheme theme-light or theme-dark
  */
 function changeTheme(newTheme) {
-    if (settings.theme != newTheme) {
-
-        if ($("body").hasClass(settings.theme)) {
-            $("body").removeClass(settings.theme);
-        }
-        $("body").addClass(newTheme);
-        settings.theme = newTheme;
-        // Store new theme
-        updateSettings();
+    if ($("body").hasClass(settings.theme)) {
+        $("body").removeClass(settings.theme);
     }
+    $("body").addClass(newTheme);
+    settings.theme = newTheme;
+    // Store new theme
+    updateSettings();
 }
 
 /**
  * Populate the player card with player's info and show
  * @param {string} name
  */
+// eslint-disable-next-line no-unused-vars
 function showPlayerCard(name) {
     if (name) {
         let lcRole = gameData.roles[name].toLowerCase();
@@ -548,7 +551,7 @@ function showPlayerCard(name) {
 // #region Event handlers
 
 $("#theme-button").click(() => {
-    changeTheme();
+    changeTheme((settings.theme === Themes.DARK ? Themes.LIGHT : Themes.DARK));
 });
 
 /** Using function to have access to this */

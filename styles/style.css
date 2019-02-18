@@ -1,367 +1,386 @@
 :root {
-	--main-color: #222;
-	--border-color: #888;
-	--bg-color: #fff;
-	--accent-color: #a1f;
-	--small-text-color: #999;
-	--button-disabled-color: #88888844;
+    --main-color: #222;
+    --border-color: #888;
+    --bg-color: #fff;
+    --accent-color: #a1f;
+    --small-text-color: #999;
+    --button-disabled-color: #88888844;
 }
 
 /* TOOD: Set two themes here by changing the colours of some basic elements */
 
 .theme-light {
-	--main-color: #222;
-	--border-color: #888;
-	--bg-color: #fff;
-	--accent-color: #a1f;
-	--small-text-color: #999;
-	--button-disabled-color: #88888844;
+    --main-color: #222;
+    --border-color: #888;
+    --bg-color: #fff;
+    --accent-color: #a1f;
+    --small-text-color: #999;
+    --button-disabled-color: #88888844;
 }
 
 .theme-dark {
-	--main-color: #eee;
-	--border-color: #888;
-	--bg-color: #333;
-	--accent-color: #a1f;
-	--small-text-color: #666;
-	--button-disabled-color: #77777744;
+    --main-color: #eee;
+    --border-color: #888;
+    --bg-color: #333;
+    --accent-color: #a1f;
+    --small-text-color: #666;
+    --button-disabled-color: #77777744;
 }
 
 * {
-	transition-property: background-color, color;
-	transition-duration: 0.1s;
-	transition-timing-function: ease-in-out;
+    transition-property: background-color, color;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
 }
 
 body {
-	margin: 0;
-	width: 100vw;
-	height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-	font-family: 'Rubik', sans-serif;
-	color: var(--main-color);
-	background-color: var(--bg-color);
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Rubik', sans-serif;
+    color: var(--main-color);
+    background-color: var(--bg-color);
 }
 
 hr {
-	width: 100%;
-	border-top: 1px solid var(--border-color);
-	border-bottom: none;
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    border-bottom: none;
 }
 
 .content-area {
-	width: 80vw;
-	height: 90vh;
-	max-width: 400px;
-	min-height: 350px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+    width: 80vw;
+    height: 90vh;
+    max-width: 400px;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .title {
-	height: 25%;
-	font-size: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
+    height: 25%;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .button-pair {
-	width: 100%;
-	height: 50px;
-	min-height: 50px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-around;
+    width: 100%;
+    height: 50px;
+    min-height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
 }
 
 button {
-	background-color: transparent;
-	border-color: var(--border-color);
-	border-style: solid;
-	border-width: 1px;
-	outline: none;
-	text-transform: uppercase;
-	color: var(--main-color);
+    background-color: transparent;
+    border-color: var(--border-color);
+    border-style: solid;
+    border-width: 1px;
+    outline: none;
+    text-transform: uppercase;
+    color: var(--main-color);
 }
 
 button:focus {
-	border-color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 button:hover {
-	background-color: var(--accent-color);
-	color: white;
+    background-color: var(--accent-color);
+    color: white;
 }
 
 button:disabled {
-	background-color: var(--button-disabled-color);
+    background-color: var(--button-disabled-color);
 }
 
 button:focus:disabled {
-	color: initial;
+    color: initial;
+}
+
+.theme-button {
+    border-radius: 50px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.theme-button i {
+    font-size: 30px;
+}
+
+.theme-button:focus {
+    background-color: var(--main-color);
 }
 
 .theme-button:hover {
+    color: var(--bg-color);
     background-color: var(--main-color);
 }
 
 .game-button {
-	width: 45%;
-	height: 52px;
-	margin: 10px;
-	padding: 10px;
-	border-radius: 5px;
+    width: 45%;
+    height: 52px;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .game-area {
-	width: 100%;
-	display: none;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .button-area {
-	height: 15%;
-	display: flex;
+    height: 15%;
+    display: flex;
 }
 
 .new-game-area {
-	height: 35%;
-	min-height: 100px;
+    height: 35%;
+    min-height: 100px;
 }
 
 .join-game-area {
-	height: 35%;
-	min-height: 150px;
+    height: 35%;
+    min-height: 150px;
 }
 
 .lobby-area {
-	height: 100%;
+    height: 100%;
 }
 
 .gameplay-area {
-	height: 100%;
+    height: 100%;
 }
 
 .language-select-container {
-	width: 50%;
-	height: 10%;
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
+    width: 50%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .players-list {
-	display: flex;
-	flex-direction: row;
-	width: 75%;
-	height: 25%;
-	flex-wrap: wrap;
-	overflow-y: auto;
-	align-content: flex-start;
+    display: flex;
+    flex-direction: row;
+    width: 75%;
+    height: 25%;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    align-content: flex-start;
 }
 
 .players-list span {
-	width: 50%;
-	text-align: center;
+    width: 50%;
+    text-align: center;
 }
 
 .settings {
-	width: 90%;
-	height: 45%;
-	flex-wrap: wrap;
-	flex-direction: row;
-	justify-content: center;
-	display: none;
-	overflow-x: hidden;
-	overflow-y: auto;
+    width: 90%;
+    height: 45%;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    display: none;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .label-counter-pair {
-	width: 50%;
-	min-height: 100px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+    width: 50%;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .counter {
-	display: flex;
-	flex-direction: row;
-	height: 40%;
-	width: 50%;
+    display: flex;
+    flex-direction: row;
+    height: 40%;
+    width: 50%;
 }
 
 .counter-display {
-	width: 50%;
-	margin: 0;
-	background-color: transparent;
-	border-color: var(--border-color);
-	border-style: solid;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
-	border-width: 1px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    width: 50%;
+    margin: 0;
+    background-color: transparent;
+    border-color: var(--border-color);
+    border-style: solid;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #innocent-counter-display {
-	width: 100%;
-	border-radius: 5px;
+    width: 100%;
+    border-radius: 5px;
 }
 
 .counter-button-pair {
-	display: flex;
-	flex-direction: column;
-	width: 50%;
-	height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
 }
 
 .counter-button {
-	height: 50%;
-	border-left: none;
+    height: 50%;
+    border-left: none;
 }
 
 .counter-increment-button {
-	border-top-right-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .counter-decrement-button {
-	border-bottom-right-radius: 5px;
-	border-top: none;
+    border-bottom-right-radius: 5px;
+    border-top: none;
 }
 
 .role-checkbox-container {
-	width: 100%;
-	margin-left: 30px;
-	flex-wrap: wrap;
-	display: flex;
-	flex-direction: row;
+    width: 100%;
+    margin-left: 30px;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
 }
 
 .role-checkbox {
-	width: calc(100% - 4px);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding: 2px;
+    width: calc(100% - 4px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px;
 }
 
 @media (min-width: 768px) {
-	.role-checkbox {
-		width: calc(50% - 4px);
-	}
+    .role-checkbox {
+        width: calc(50% - 4px);
+    }
 }
 
 #start-button {
-	display: none;
+    display: none;
 }
 
 .game-id-label {
-	line-height: 20px;
+    line-height: 20px;
 }
 
 #game-id {
-	font-family: monospace;
-	font-size: 20px;
+    font-family: monospace;
+    font-size: 20px;
 }
 
 .role-title {
-	font-weight: bold;
-	text-transform: uppercase;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .role-name {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .role-description {
-	text-align: start;
-	width: 80%;
+    text-align: start;
+    width: 80%;
 }
 
 .role-flavour-text {
-	font-style: italic;
-	text-align: start;
-	display: none;
+    font-style: italic;
+    text-align: start;
+    display: none;
 }
 
 .player-id-card {
-	position: absolute;
-	width: 75%;
-	max-width: 300px;
-	height: 55%;
-	max-height: 350px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: var(--border-color);
-	border-radius: 5px;
-	background-color: var(--bg-color);
-	display: flex;
-	visibility: hidden;
-	flex-direction: column;
-	justify-content: space-around;
-	align-items: center;
+    position: absolute;
+    width: 75%;
+    max-width: 300px;
+    height: 55%;
+    max-height: 350px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color);
+    border-radius: 5px;
+    background-color: var(--bg-color);
+    display: flex;
+    visibility: hidden;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }
 
 #players-list-gameplay-area span:hover {
-	color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 select {
-	outline: none;
+    outline: none;
 }
 
 select:focus {
-	border-color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 input[type="text"] {
-	outline: none;
-	padding: 10px;
-	width: 45%;
-	border-color: var(--border-color);
-	border-style: solid;
-	border-radius: 5px;
-	border-width: 1px;
+    outline: none;
+    padding: 10px;
+    width: 45%;
+    border-color: var(--border-color);
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
 }
 
 input[type="text"]:focus {
-	border-color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 .small-links {
-	width: 60%;
-	height: 10%;
-	color: var(--small-text-color);
-	font-size: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
+    width: 60%;
+    height: 10%;
+    color: var(--small-text-color);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 a:link {
-	color: var(--small-text-color);
+    color: var(--small-text-color);
 }
 
 a:visited {
-	color: var(--small-text-color);
+    color: var(--small-text-color);
 }
 
 a:hover {
-	color: var(--small-text-color);
+    color: var(--small-text-color);
 }
 
 a:active {
-	color: var(--small-text-color);
+    color: var(--small-text-color);
 }
