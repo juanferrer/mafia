@@ -108,6 +108,10 @@ button:focus:disabled {
 	color: initial;
 }
 
+.theme-button:hover {
+    background-color: var(--main-color);
+}
+
 .game-button {
 	width: 45%;
 	height: 52px;
