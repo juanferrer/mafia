@@ -123,7 +123,7 @@ button:focus:disabled {
 }
 
 .theme-button:focus {
-    background-color: var(--main-color);
+    border-color: var(--accent-color);
 }
 
 .theme-button:hover {
