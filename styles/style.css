@@ -5,6 +5,7 @@
     --accent-color: #a1f;
     --small-text-color: #999;
     --button-disabled-color: #88888844;
+    --transition-duration: 0.1s
 }
 
 /* TOOD: Set two themes here by changing the colours of some basic elements */
@@ -27,12 +28,6 @@
     --button-disabled-color: #77777744;
 }
 
-* {
-    transition-property: background-color, color;
-    transition-duration: 0.1s;
-    transition-timing-function: ease-in-out;
-}
-
 body {
     margin: 0;
     width: 100vw;
@@ -44,6 +39,9 @@ body {
     font-family: 'Rubik', sans-serif;
     color: var(--main-color);
     background-color: var(--bg-color);
+    transition-property: background-color, color;
+    transition-duration: var(--transition-duration);
+    transition-timing-function: ease-in-out;
 }
 
 hr {
@@ -89,6 +87,9 @@ button {
     outline: none;
     text-transform: uppercase;
     color: var(--main-color);
+    transition-property: background-color, color;
+    transition-duration: var(--transition-duration);
+    transition-timing-function: ease-in-out;
 }
 
 button:focus {
@@ -339,9 +340,16 @@ button:focus:disabled {
 
 select {
     outline: none;
+    transition-property: background-color, color;
+    transition-duration: var(--transition-duration);
+    transition-timing-function: ease-in-out;
 }
 
 select:focus {
+    border-color: var(--accent-color);
+}
+
+select:hover {
     border-color: var(--accent-color);
 }
 
