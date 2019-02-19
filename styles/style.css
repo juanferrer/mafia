@@ -48,6 +48,7 @@ hr {
     width: 100%;
     border-top: 1px solid var(--border-color);
     border-bottom: none;
+    margin: 0;
 }
 
 .content-area {
@@ -142,33 +143,39 @@ button:focus:disabled {
 
 .game-area {
     width: 100%;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    transition-property: height;
+    transition-duration: 0.5s;
+    overflow: hidden;
+    transition-timing-function: ease-in-out;
 }
 
 .button-area {
     height: 15%;
-    display: flex;
+    /* display: flex; */
 }
 
 .new-game-area {
-    height: 35%;
-    min-height: 100px;
+    /* height: 35%; */
+    height: 0;
 }
 
 .join-game-area {
-    height: 35%;
-    min-height: 150px;
+    /* height: 35%; */
+    height: 0;
 }
 
 .lobby-area {
-    height: 100%;
+    /* height: 100%; */
+    height: 0;
 }
 
 .gameplay-area {
-    height: 100%;
+    /* height: 100%; */
+    height: 0;
 }
 
 .language-select-container {

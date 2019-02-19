@@ -25,6 +25,16 @@ const Themes = Object.freeze({
     DARK: "theme-dark"
 });
 
+const GameAreaHeights = Object.freeze({
+    BUTTON: "15%",
+    NEWGAME: "35%",
+    JOINGAME: "35%",
+    LOBBY: "100%",
+    GAMEPLAY: "100%"
+});
+
+const AnimationTimer = 600;
+
 let gameID = "";
 let playerName = "";
 let isGM = false;
@@ -138,8 +148,10 @@ function setGameActive(gameID, playerName, makeActive) {
             debug.log("Data: " + data);
             debug.log("Status: " + status);
             debug.log("Request: " + request);
-            $(".lobby-area").css("display", "none");
-            $(".gameplay-area").css("display", "flex");
+            //$(".lobby-area").css("display", "none");
+            $(".lobby-area").css("height", "0");
+            // $(".gameplay-area").css("display", "flex");
+            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
             //clearTimeout(refreshTimeout);
             //refreshTimeout = undefined;
         }
@@ -242,8 +254,10 @@ function updateGameState(data, status, request) {
                 playerRole = gameData.roles[playerName];
                 // Start the game
                 populateGameplayArea();
-                $(".lobby-area").css("display", "none");
-                $(".gameplay-area").css("display", "flex");
+                // $(".lobby-area").css("display", "none");
+                $(".lobby-area").css("height", "0");
+                // $(".gameplay-area").css("display", "flex");
+                setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
                 clearTimeout(refreshTimeout);
                 refreshTimeout = undefined;
                 return;
@@ -291,9 +305,12 @@ function goToLobby(data, status, request) {
             $(".settings").css("display", "flex");
         }
 
-        $(".new-game-area").css("display", "none");
-        $(".join-game-area").css("display", "none");
-        $(".lobby-area").css("display", "flex");
+        // $(".new-game-area").css("display", "none");
+        $(".new-game-area").css("height", "0");
+        // $(".join-game-area").css("display", "none");
+        $(".join-game-area").css("height", "0");
+        // $(".lobby-area").css("display", "flex");
+        setTimeout(() => { $(".lobby-area").css("height", GameAreaHeights.LOBBY); }, AnimationTimer);
 
         // And start update function
         requestGameStateUpdate();
@@ -562,19 +579,26 @@ $("#language-select").change(function () {
 });
 
 $("#start-new-game-button").click(() => {
-    $(".new-game-area").css("display", "flex");
-    $(".button-area").css("display", "none");
+    // $(".new-game-area").css("display", "flex");
+    setTimeout(() => { $(".new-game-area").css("height", GameAreaHeights.NEWGAME); }, AnimationTimer);
+    // $(".button-area").css("display", "none");
+    $(".button-area").css("height", "0");
 });
 
 $("#start-join-game-button").click(() => {
-    $(".join-game-area").css("display", "flex");
-    $(".button-area").css("display", "none");
+    // $(".join-game-area").css("display", "flex");
+    setTimeout(() => { $(".join-game-area").css("height", GameAreaHeights.JOINGAME); }, AnimationTimer);
+    // $(".button-area").css("display", "none");
+    $(".button-area").css("height", "0");
 });
 
 $(".back-button").click(() => {
-    $(".button-area").css("display", "flex");
-    $(".new-game-area").css("display", "none");
-    $(".join-game-area").css("display", "none");
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".new-game-area").css("display", "none");
+    $(".new-game-area").css("height", "0");
+    // $(".join-game-area").css("display", "none");
+    $(".join-game-area").css("height", "0");
 });
 
 $("#new-game-button").click(() => {
@@ -594,8 +618,10 @@ $("#start-button").click(() => {
 });
 
 $("#close-button").click(() => {
-    $(".button-area").css("display", "flex");
-    $(".lobby-area").css("display", "none");
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".lobby-area").css("display", "none");
+    $(".lobby-area").css("height", "0");
     leaveGame(gameID, playerName);
 });
 
@@ -612,14 +638,18 @@ $("#close-player-card-button").click(() => {
 });
 
 $("#new-game-gameplay-button").click(() => {
-    $(".join-game-area").css("display", "flex");
-    $(".gameplay-area").css("display", "none");
+    // $(".join-game-area").css("display", "flex");
+    setTimeout(() => { $(".join-game-area").css("height", GameAreaHeights.JOINGAME); }, AnimationTimer);
+    // $(".gameplay-area").css("display", "none");
+    $(".gameplay-area").css("height", "0");
     requestGameStateUpdate();
 });
 
 $("#leave-gameplay-button").click(() => {
-    $(".button-area").css("display", "flex");
-    $(".gameplay-area").css("display", "none");
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".gameplay-area").css("display", "none");
+    $(".gameplay-area").css("height", "0");
     leaveGame(gameID, playerName);
 });
 
