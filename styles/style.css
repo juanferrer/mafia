@@ -2,7 +2,7 @@
     --main-color: #222;
     --border-color: #888;
     --bg-color: #fff;
-    --accent-color: #a1f;
+    --accent-color: #B00020;
     --small-text-color: #999;
     --button-disabled-color: #88888844;
     --transition-duration: 0.1s
@@ -14,7 +14,7 @@
     --main-color: #222;
     --border-color: #888;
     --bg-color: #fff;
-    --accent-color: #a1f;
+    --accent-color: #B00020;
     --small-text-color: #999;
     --button-disabled-color: #88888844;
 }
@@ -23,7 +23,7 @@
     --main-color: #eee;
     --border-color: #888;
     --bg-color: #333;
-    --accent-color: #a1f;
+    --accent-color: #B00020;
     --small-text-color: #666;
     --button-disabled-color: #77777744;
 }
