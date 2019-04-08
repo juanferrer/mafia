@@ -1,118 +1,118 @@
 {
-	"title": "Мафия",
-	"new-game-button": "Новая игра",
-	"join-game-button": "Присоединиться к игре",
-	"create-button": "Создать",
-	"back-button": "Назад",
-	"join-button": "Присоединиться",
-	"leave-button": "Оставить",
-	"name-placeholder-label": "Введите имя",
-	"game-id-placeholder-label": "Введите код доступа",
-	"game-id-label": "Код доступа: ",
-	"mafioso-number-input-label": "Мафиози",
-	"innocent-number-input-label": "Обыватели",
-	"detective-role-checkbox-label": "Detective",
-	"doctor-role-checkbox-label": "Doctor",
-	"witness-role-checkbox-label": "Witness",
-	"jailer-role-checkbox-label": "Jailer",
-	"vigilante-role-checkbox-label": "Vigilante",
-	"godfather-role-checkbox-label": "Godfather",
-	"medium-role-checkbox-label": "Medium",
-	"bodyguard-role-checkbox-label": "Bodyguard",
-	"cultleader-role-checkbox-label": "Cult Leader",
-	"snitch-role-checkbox-label": "Snitch",
-	"cupid-role-checkbox-label": "Cupid",
-	"killer-role-checkbox-label": "Killer",
-	"suicidal-role-checkbox-label": "Suicidal",
-	"warveteran-role-checkbox-label": "War Veteran",
-	"start-button": "Пуск",
-	"close-button": "Закрыть",
-	"role-title-label": "Ты ",
-	"role-title-label-player-card": "Player is ",
-	"gm-role-title": "Ведущий",
-	"gm-role-description": "The <span class='role-name'>NARRATOR</span> tells the story and keeps players engaged.",
-	"gm-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"mafioso-role-title": "Мафиози",
-	"mafioso-role-description": "A <span class='role-name'>MAFIOSO</span> wakes up every night and can kill an <span class='role-name'>INNOCENT</span>.",
-	"mafioso-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"innocent-role-title": "Обыватель",
-	"innocent-role-description": "An <span class='role-name'>INNOCENT</span> is a poor victim. But careful, don't let your attention wander!",
-	"innocent-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"detective-role-title": "Detective",
-	"detective-role-description": "The <span class='role-name'>Detective</span> wakes up every night and can find out whether a players is a <span class='role-name'>Mafioso</span>.",
-	"detective-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"doctor-role-title": "Doctor",
-	"doctor-role-description": "The <span class='role-name'>Doctor</span> wakes up every night and protects another player. The selected player cannot be killed by the mafia that night.",
-	"doctor-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"witness-role-title": "Witness",
-	"witness-role-description": "The <span class='role-name'>Witness</span> can spy on the mafia during the night. The <span class='role-name'>Witness</span> should do so carefully, lest they be discovered and killed.",
-	"witness-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"jailer-role-title": "Jailer",
-	"jailer-role-description": "The <span class='role-name'>Jailer</span> wakes up every night and can find out whether a players is a <span class='role-name'>Mafioso</span>. If so, that player goes to jail, where is unable to act during the night. When the <span class='role-name'>Jailer</span> dies, all mafiosi walk free.",
-	"jailer-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"vigilante-role-title": "Vigilante",
-	"vigilante-role-description": "The <span class='role-name'>Vigilante</span> wakes up every night and can decide to kill another player.",
-	"vigilante-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"godfather-role-title": "Godfather",
-	"godfather-role-description": "The <span class='role-name'>Godfather</span> wakes up with the mafia, but appears as an <span class='role-name'>Innocent</span>.",
-	"godfather-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"medium-role-title": "Medium",
-	"medium-role-description": "The <span class='role-name'>Medium</span> wakes up every night and can decide to communicate with the dead.",
-	"medium-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"bodyguard-role-title": "Bodyguard",
-	"bodyguard-role-description": "The <span class='role-name'>Bodyguard</span> wakes up during the first night to choose another player. If that player were to die to the mafia, the <span class='role-name'>Bodyguard</span> dies instead.",
-	"bodyguard-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"cultleader-role-title": "Cult Leader",
-	"cultleader-role-description": "The <span class='role-name'>Cult Leader</span> wakes up every night and selects another player to be converted to their cult. After that, all cultists wake up to meet (except for the cultist). The night all players wake up, the cultist wins.",
-	"cultleader-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"snitch-role-title": "Snitch",
-	"snitch-role-description": "The <span class='role-name'>Snitch</span> wakes up every other night and selects another player. The next morning, the selected player is publicly announced as a <span class='role-name'>Mafioso</span>.",
-	"snitch-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"cupid-role-title": "Cupid",
-	"cupid-role-description": "<span class='role-name'>Cupid</span> wakes up the first night and selects two players to fall in love. These players become connected and if one of them dies, the other one dies of a broken heart.",
-	"cupid-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"killer-role-title": "Killer",
-	"killer-role-description": "The <span class='role-name'>Killer</span> wakes up every night to kill another player. The <span class='role-name'>Killer</span> wins when all other players are dead.",
-	"killer-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"suicidal-role-title": "Suicidal",
-	"suicidal-role-description": "The <span class='role-name'>Suicidal</span> attempts to convince the <span class='role-name'>Innocents</span> to lynch them. When that happens, the <span class='role-name'>Suicidal</span> wins.",
-	"suicidal-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"warveteran-role-title": "War Veteran",
-	"warveteran-role-description": "The <span class='role-name'>War Veteran</span> will survive the first attack of the mafia.",
-	"warveteran-role-flavour-text": [
-		"FLAVOUR TEXT"
-	],
-	"game-not-found-alert": "Не удалось найти запрошенное игру"
+    "title": "Мафия",
+    "new-game-button": "Новая игра",
+    "join-game-button": "Присоединиться к игре",
+    "create-button": "Создать",
+    "back-button": "Назад",
+    "join-button": "Присоединиться",
+    "leave-button": "Оставить",
+    "name-placeholder-label": "Введите имя",
+    "game-id-placeholder-label": "Введите код доступа",
+    "game-id-label": "Код доступа: ",
+    "mafioso-number-input-label": "Мафиози",
+    "innocent-number-input-label": "Обыватели",
+    "detective-role-checkbox-label": "Detective",
+    "doctor-role-checkbox-label": "Doctor",
+    "witness-role-checkbox-label": "Witness",
+    "jailer-role-checkbox-label": "Jailer",
+    "vigilante-role-checkbox-label": "Vigilante",
+    "godfather-role-checkbox-label": "Godfather",
+    "medium-role-checkbox-label": "Medium",
+    "bodyguard-role-checkbox-label": "Bodyguard",
+    "cultleader-role-checkbox-label": "Cult Leader",
+    "snitch-role-checkbox-label": "Snitch",
+    "cupid-role-checkbox-label": "Cupid",
+    "killer-role-checkbox-label": "Killer",
+    "suicidal-role-checkbox-label": "Suicidal",
+    "warveteran-role-checkbox-label": "War Veteran",
+    "start-button": "Пуск",
+    "close-button": "Закрыть",
+    "role-title-label": "Ты ",
+    "role-title-label-player-card": "Player is ",
+    "gm-role-title": "Ведущий",
+    "gm-role-description": "<span class='role-name'>Ведущий</span> распределяет роли и поддерживает интерес у играющих.",
+    "gm-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "mafioso-role-title": "Мафиози",
+    "mafioso-role-description": "<span class='role-name'>Мафия</span> просыпается каждую ночь и убивает <span class='role-name'>мирного жителя</span>.",
+    "mafioso-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "innocent-role-title": "Мирный житель",
+    "innocent-role-description": "<span class='role-name'>Мирный житель</span> — это невинная жертва. Но не расслабляйся, будь всегда начеку!",
+    "innocent-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "detective-role-title": "Детектив",
+    "detective-role-description": "<span class='role-name'>Детектив</span> просыпается каждую ночь и может выяснить принадлежит ли другой игрок к мафии.",
+    "detective-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "doctor-role-title": "Доктор",
+    "doctor-role-description": "<span class='role-name'>Доктор</span> просыпается каждую ночь и выбирает игрока ,этот игрок не может быть убит мафией этой ночью.",
+    "doctor-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "witness-role-title": "Свидетель",
+    "witness-role-description": "<span class='role-name'>Свидетель</span> может шпионить за мафией в течение всей ночи. Делай это с осторожностью! Не то тебя раскроют и убьют!",
+    "witness-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "jailer-role-title": "Тюремщик",
+    "jailer-role-description": "<span class='role-name'>Тюремщик</span> просыпается каждую ночь и может узнать принадлежит ли другой игрок к мафии. Если другой игрок — мафия,его отправляют в тюрьму и он теряет свою очередь в течение этой ночи. Когда тюремщик умирает, все мафиози сбегают из тюрьмы.",
+    "jailer-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "vigilante-role-title": "Vigilante",
+    "vigilante-role-description": "The <span class='role-name'>Vigilante</span> wakes up every night and can decide to kill another player.",
+    "vigilante-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "godfather-role-title": "Godfather",
+    "godfather-role-description": "The <span class='role-name'>Godfather</span> wakes up with the mafia, but appears as an <span class='role-name'>Innocent</span>.",
+    "godfather-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "medium-role-title": "Medium",
+    "medium-role-description": "The <span class='role-name'>Medium</span> wakes up every night and can decide to communicate with the dead.",
+    "medium-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "bodyguard-role-title": "Bodyguard",
+    "bodyguard-role-description": "The <span class='role-name'>Bodyguard</span> wakes up during the first night to choose another player. If that player were to die to the mafia, the <span class='role-name'>Bodyguard</span> dies instead.",
+    "bodyguard-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "cultleader-role-title": "Cult Leader",
+    "cultleader-role-description": "The <span class='role-name'>Cult Leader</span> wakes up every night and selects another player to be converted to their cult. After that, all cultists wake up to meet (except for the cultist). The night all players wake up, the cultist wins.",
+    "cultleader-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "snitch-role-title": "Snitch",
+    "snitch-role-description": "The <span class='role-name'>Snitch</span> wakes up every other night and selects another player. The next morning, the selected player is publicly announced as a <span class='role-name'>Mafioso</span>.",
+    "snitch-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "cupid-role-title": "Cupid",
+    "cupid-role-description": "<span class='role-name'>Cupid</span> wakes up the first night and selects two players to fall in love. These players become connected and if one of them dies, the other one dies of a broken heart.",
+    "cupid-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "killer-role-title": "Killer",
+    "killer-role-description": "The <span class='role-name'>Killer</span> wakes up every night to kill another player. The <span class='role-name'>Killer</span> wins when all other players are dead.",
+    "killer-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "suicidal-role-title": "Suicidal",
+    "suicidal-role-description": "The <span class='role-name'>Suicidal</span> attempts to convince the <span class='role-name'>Innocents</span> to lynch them. When that happens, the <span class='role-name'>Suicidal</span> wins.",
+    "suicidal-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "warveteran-role-title": "War Veteran",
+    "warveteran-role-description": "The <span class='role-name'>War Veteran</span> will survive the first attack of the mafia.",
+    "warveteran-role-flavour-text": [
+        "FLAVOUR TEXT"
+    ],
+    "game-not-found-alert": "Не удалось найти запрошенное игру"
 }
