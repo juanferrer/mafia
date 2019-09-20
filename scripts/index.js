@@ -20,6 +20,21 @@ const Roles = Object.freeze({
     SNITCH: "SNITCH"
 });
 
+const Themes = Object.freeze({
+    LIGHT: "theme-light",
+    DARK: "theme-dark"
+});
+
+const GameAreaHeights = Object.freeze({
+    BUTTON: "15%",
+    NEWGAME: "35%",
+    JOINGAME: "35%",
+    LOBBY: "100%",
+    GAMEPLAY: "100%"
+});
+
+const AnimationTimer = 600;
+
 let gameID = "";
 let playerName = "";
 let isGM = false;
@@ -33,7 +48,11 @@ let playerRole = "";
 
 let settings = {
     languageCode: "en",
+<<<<<<< HEAD
     theme: "theme-dark"
+=======
+    theme: Themes.DARK
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
 };
 
 // Every time a new translation is added, the name of the language needs to
@@ -133,8 +152,15 @@ function setGameActive(gameID, playerName, makeActive) {
             debug.log("Data: " + data);
             debug.log("Status: " + status);
             debug.log("Request: " + request);
+<<<<<<< HEAD
             $(".lobby-area").css("display", "none");
             $(".gameplay-area").css("display", "flex");
+=======
+            //$(".lobby-area").css("display", "none");
+            $(".lobby-area").css("height", "0");
+            // $(".gameplay-area").css("display", "flex");
+            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
             //clearTimeout(refreshTimeout);
             //refreshTimeout = undefined;
         }
@@ -237,8 +263,15 @@ function updateGameState(data, status, request) {
                 playerRole = gameData.roles[playerName];
                 // Start the game
                 populateGameplayArea();
+<<<<<<< HEAD
                 $(".lobby-area").css("display", "none");
                 $(".gameplay-area").css("display", "flex");
+=======
+                // $(".lobby-area").css("display", "none");
+                $(".lobby-area").css("height", "0");
+                // $(".gameplay-area").css("display", "flex");
+                setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
                 clearTimeout(refreshTimeout);
                 refreshTimeout = undefined;
                 return;
@@ -286,9 +319,18 @@ function goToLobby(data, status, request) {
             $(".settings").css("display", "flex");
         }
 
+<<<<<<< HEAD
         $(".new-game-area").css("display", "none");
         $(".join-game-area").css("display", "none");
         $(".lobby-area").css("display", "flex");
+=======
+        // $(".new-game-area").css("display", "none");
+        $(".new-game-area").css("height", "0");
+        // $(".join-game-area").css("display", "none");
+        $(".join-game-area").css("height", "0");
+        // $(".lobby-area").css("display", "flex");
+        setTimeout(() => { $(".lobby-area").css("height", GameAreaHeights.LOBBY); }, AnimationTimer);
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
 
         // And start update function
         requestGameStateUpdate();
@@ -517,6 +559,7 @@ function updateSettings() {
  * @param {string} newTheme theme-light or theme-dark
  */
 function changeTheme(newTheme) {
+<<<<<<< HEAD
     if (settings.theme != newTheme) {
 
         if ($("body").hasClass(settings.theme)) {
@@ -527,12 +570,22 @@ function changeTheme(newTheme) {
         // Store new theme
         updateSettings();
     }
+=======
+    if ($("body").hasClass(settings.theme)) {
+        $("body").removeClass(settings.theme);
+    }
+    $("body").addClass(newTheme);
+    settings.theme = newTheme;
+    // Store new theme
+    updateSettings();
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
 }
 
 /**
  * Populate the player card with player's info and show
  * @param {string} name
  */
+// eslint-disable-next-line no-unused-vars
 function showPlayerCard(name) {
     if (name) {
         let lcRole = gameData.roles[name].toLowerCase();
@@ -547,6 +600,10 @@ function showPlayerCard(name) {
 
 // #region Event handlers
 
+$("#theme-button").click(() => {
+    changeTheme((settings.theme === Themes.DARK ? Themes.LIGHT : Themes.DARK));
+});
+
 /** Using function to have access to this */
 $("#language-select").change(function () {
     settings.languageCode = this.value;
@@ -555,6 +612,7 @@ $("#language-select").change(function () {
 });
 
 $("#start-new-game-button").click(() => {
+<<<<<<< HEAD
     $(".new-game-area").css("display", "flex");
     $(".button-area").css("display", "none");
 });
@@ -568,6 +626,28 @@ $(".back-button").click(() => {
     $(".button-area").css("display", "flex");
     $(".new-game-area").css("display", "none");
     $(".join-game-area").css("display", "none");
+=======
+    // $(".new-game-area").css("display", "flex");
+    setTimeout(() => { $(".new-game-area").css("height", GameAreaHeights.NEWGAME); }, AnimationTimer);
+    // $(".button-area").css("display", "none");
+    $(".button-area").css("height", "0");
+});
+
+$("#start-join-game-button").click(() => {
+    // $(".join-game-area").css("display", "flex");
+    setTimeout(() => { $(".join-game-area").css("height", GameAreaHeights.JOINGAME); }, AnimationTimer);
+    // $(".button-area").css("display", "none");
+    $(".button-area").css("height", "0");
+});
+
+$(".back-button").click(() => {
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".new-game-area").css("display", "none");
+    $(".new-game-area").css("height", "0");
+    // $(".join-game-area").css("display", "none");
+    $(".join-game-area").css("height", "0");
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
 });
 
 $("#new-game-button").click(() => {
@@ -587,8 +667,15 @@ $("#start-button").click(() => {
 });
 
 $("#close-button").click(() => {
+<<<<<<< HEAD
     $(".button-area").css("display", "flex");
     $(".lobby-area").css("display", "none");
+=======
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".lobby-area").css("display", "none");
+    $(".lobby-area").css("height", "0");
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
     leaveGame(gameID, playerName);
 });
 
@@ -605,14 +692,28 @@ $("#close-player-card-button").click(() => {
 });
 
 $("#new-game-gameplay-button").click(() => {
+<<<<<<< HEAD
     $(".join-game-area").css("display", "flex");
     $(".gameplay-area").css("display", "none");
+=======
+    // $(".join-game-area").css("display", "flex");
+    setTimeout(() => { $(".join-game-area").css("height", GameAreaHeights.JOINGAME); }, AnimationTimer);
+    // $(".gameplay-area").css("display", "none");
+    $(".gameplay-area").css("height", "0");
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
     requestGameStateUpdate();
 });
 
 $("#leave-gameplay-button").click(() => {
+<<<<<<< HEAD
     $(".button-area").css("display", "flex");
     $(".gameplay-area").css("display", "none");
+=======
+    // $(".button-area").css("display", "flex");
+    setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
+    // $(".gameplay-area").css("display", "none");
+    $(".gameplay-area").css("height", "0");
+>>>>>>> 2b924c7b2ea4afc251e2b0d705e9b05648d0f8ba
     leaveGame(gameID, playerName);
 });
 

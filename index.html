@@ -2,173 +2,177 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>Mafia</title>
-	<meta name="author" content="Juan Ferrer">
-	<meta name="description" content="Mafia (party game) online">
-	<meta name="keywords" content="Mafia, Werewolf, party, game, online, multiplayer">
-	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon">
-	<link rel="stylesheet" href="styles/style.css" type="text/css">
-	<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
-	<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-116931443-3']);
-		_gaq.push(['_trackPageview']);
-		(function () {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
-	</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mafia</title>
+    <meta name="author" content="Juan Ferrer">
+    <meta name="description" content="Mafia (party game) online">
+    <meta name="keywords" content="Mafia, Werewolf, party, game, online, multiplayer">
+    <link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="stylesheet" href="styles/style.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-116931443-3']);
+        _gaq.push(['_trackPageview']);
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 </head>
 
-<body class="theme-dark">
-	<div class="content-area">
-		<div class="title" id="title">Mafia</div>
-		<hr>
-		<div class="game-area button-area">
-			<div class="button-pair">
-				<button class="game-button" id="start-new-game-button">NEW GAME</button>
-				<button class="game-button" id="start-join-game-button">JOIN GAME</button>
-			</div>
-		</div>
-		<div class="game-area new-game-area">
-			<input id="new-game-player-name-input" type="text" name="new-game-player-name" value=""
-				placeholder="Enter your name">
-			<div class="button-pair">
-				<button class="game-button" id="new-game-button">CREATE</button>
-				<button class="game-button back-button" id="new-game-back-button">BACK</button>
-			</div>
-		</div>
-		<div class="game-area join-game-area">
-			<input id="join-game-id-input" type="text" name="join-game-id" value="" placeholder="Enter access code">
-			<input id="join-game-player-name-input" type="text" name="join-game-player-name" value=""
-				placeholder="Enter your name">
-			<div class="button-pair">
-				<button class="game-button" id="join-game-button">JOIN</button>
-				<button class="game-button back-button" id="join-game-back-button">BACK</button>
-			</div>
-		</div>
-		<div class="game-area lobby-area">
-			<div class="game-id-group"><span class="game-id-label" id="game-id-label">Access code: </span><span
-					id="game-id"></span></div>
-			<div class="players-list" id="players-list">
-			</div>
-			<div class="settings">
-				<div class="label-counter-pair">
-					<label for="mafioso-counter-display" id="mafioso-number-input-label">Mafiosos</label>
-					<div class="counter">
-						<div class="counter-display" id="mafioso-counter-display" data-value="0">0</div>
-						<div class="counter-button-pair">
-							<button class="counter-button counter-increment-button"
-								data-display="mafioso-counter-display" disabled>+</button>
-							<button class="counter-button counter-decrement-button"
-								data-display="mafioso-counter-display" disabled>-</button>
-						</div>
-					</div>
-				</div>
-				<div class="label-counter-pair">
-					<label for="innocent-counter-display" id="innocent-number-input-label">Innocents</label>
-					<div class="counter">
-						<div class="counter-display" id="innocent-counter-display" data-value="0">0</div>
-					</div>
-				</div>
-				<div class="role-checkbox-container">
-					<div class="role-checkbox">
-						<input type="checkbox" id="detective-role-checkbox">
-						<label for="detective-role-checkbox" id="detective-role-checkbox-label">Detective</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="doctor-role-checkbox">
-						<label for="doctor-role-checkbox" id="doctor-role-checkbox-label">Doctor</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="witness-role-checkbox">
-						<label for="witness-role-checkbox" id="witness-role-checkbox-label">Witness</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="jailer-role-checkbox">
-						<label for="jailer-role-checkbox" id="jailer-role-checkbox-label">Jailer</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="vigilante-role-checkbox">
-						<label for="vigilante-role-checkbox" id="vigilante-role-checkbox-label">Vigilante</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="godfather-role-checkbox">
-						<label for="godfather-role-checkbox" id="godfather-role-checkbox-label">Godfather</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="medium-role-checkbox">
-						<label for="medium-role-checkbox" id="medium-role-checkbox-label">Medium</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="bodyguard-role-checkbox">
-						<label for="bodyguard-role-checkbox" id="bodyguard-role-checkbox-label">Bodyguard</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="cultleader-role-checkbox">
-						<label for="cultleader-role-checkbox" id="cultleader-role-checkbox-label">Cult Leader</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="snitch-role-checkbox">
-						<label for="snitch-role-checkbox" id="snitch-role-checkbox-label">Snitch</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="cupid-role-checkbox">
-						<label for="cupid-role-checkbox" id="cupid-role-checkbox-label">Cupid</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="killer-role-checkbox">
-						<label for="killer-role-checkbox" id="killer-role-checkbox-label">Killer</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="suicidal-role-checkbox">
-						<label for="suicidal-role-checkbox" id="suicidal-role-checkbox-label">Suicidal</label>
-					</div>
-					<div class="role-checkbox">
-						<input type="checkbox" id="warveteran-role-checkbox">
-						<label for="warveteran-role-checkbox" id="warveteran-role-checkbox-label">War Veteran</label>
-					</div>
-				</div>
-			</div>
-			<div class="button-pair">
-				<button class="game-button" id="start-button">START</button>
-				<button class="game-button" id="close-button">CLOSE</button>
-			</div>
-		</div>
-		<div class="game-area gameplay-area">
-			<div class="role-title-group"><span class="" id="role-title-label">You are </span><span class="role-title"
-					id="role-title"></span></div>
-			<div class="role-image"></div>
-			<div class="players-list" id="players-list-gameplay-area"></div>
-			<div class="role-description" id="role-description"></div>
-			<div class="role-flavour-text" id="role-flavour-text"></div>
-			<div class="button-pair">
-				<button class="game-button" id="new-game-gameplay-button">NEW GAME</button>
-				<button class="game-button" id="leave-gameplay-button">LEAVE</button>
-			</div>
-			<!-- GM exclusive -->
-			<div class="player-id-card">
-				<div class="role-title-group"><span class="" id="role-title-label-player-card">Player is </span><span
-						class="role-title" id="role-title-player-card"></span></div>
-				<div class="role-description" id="role-description-player-card"></div>
-				<button class="game-button" id="close-player-card-button">CLOSE</button>
-			</div>
-		</div>
-		<hr>
-		<div class="language-select-container">
-			<select id="language-select">
-			</select>
-		</div>
-		<div class="small-links">
-			<a href="https://github.com/juanferrer/mafia">https://github.com/juanferrer/mafia</a>
-		</div>
-	</div>
-	<!-- Scripts -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="./scripts/index.js"></script>
+<body class="theme-light">
+    <div class="content-area">
+        <button class="theme-button" id="theme-button"><i class="material-icons">invert_colors</i></button>
+        <div class="title" id="title">Mafia</div>
+        <hr>
+        <div class="game-area button-area">
+            <div class="button-pair">
+                <button class="game-button" id="start-new-game-button">NEW GAME</button>
+                <button class="game-button" id="start-join-game-button">JOIN GAME</button>
+            </div>
+        </div>
+        <div class="game-area new-game-area">
+            <input id="new-game-player-name-input" type="text" name="new-game-player-name" value=""
+                placeholder="Enter your name">
+            <div class="button-pair">
+                <button class="game-button" id="new-game-button">CREATE</button>
+                <button class="game-button back-button" id="new-game-back-button">BACK</button>
+            </div>
+        </div>
+        <div class="game-area join-game-area">
+            <input id="join-game-id-input" type="text" name="join-game-id" value="" placeholder="Enter access code">
+            <input id="join-game-player-name-input" type="text" name="join-game-player-name" value=""
+                placeholder="Enter your name">
+            <div class="button-pair">
+                <button class="game-button" id="join-game-button">JOIN</button>
+                <button class="game-button back-button" id="join-game-back-button">BACK</button>
+            </div>
+        </div>
+        <div class="game-area lobby-area">
+            <div class="game-id-group"><span class="game-id-label" id="game-id-label">Access code: </span><span
+                    id="game-id"></span></div>
+            <div class="players-list" id="players-list">
+            </div>
+            <div class="settings">
+                <div class="label-counter-pair">
+                    <label for="mafioso-counter-display" id="mafioso-number-input-label">Mafiosos</label>
+                    <div class="counter">
+                        <div class="counter-display" id="mafioso-counter-display" data-value="0">0</div>
+                        <div class="counter-button-pair">
+                            <button class="counter-button counter-increment-button"
+                                data-display="mafioso-counter-display" disabled>+</button>
+                            <button class="counter-button counter-decrement-button"
+                                data-display="mafioso-counter-display" disabled>-</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="label-counter-pair">
+                    <label for="innocent-counter-display" id="innocent-number-input-label">Innocents</label>
+                    <div class="counter">
+                        <div class="counter-display" id="innocent-counter-display" data-value="0">0</div>
+                    </div>
+                </div>
+                <div class="role-checkbox-container">
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="detective-role-checkbox">
+                        <label for="detective-role-checkbox" id="detective-role-checkbox-label">Detective</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="doctor-role-checkbox">
+                        <label for="doctor-role-checkbox" id="doctor-role-checkbox-label">Doctor</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="witness-role-checkbox">
+                        <label for="witness-role-checkbox" id="witness-role-checkbox-label">Witness</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="jailer-role-checkbox">
+                        <label for="jailer-role-checkbox" id="jailer-role-checkbox-label">Jailer</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="vigilante-role-checkbox">
+                        <label for="vigilante-role-checkbox" id="vigilante-role-checkbox-label">Vigilante</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="godfather-role-checkbox">
+                        <label for="godfather-role-checkbox" id="godfather-role-checkbox-label">Godfather</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="medium-role-checkbox">
+                        <label for="medium-role-checkbox" id="medium-role-checkbox-label">Medium</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="bodyguard-role-checkbox">
+                        <label for="bodyguard-role-checkbox" id="bodyguard-role-checkbox-label">Bodyguard</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="cultleader-role-checkbox">
+                        <label for="cultleader-role-checkbox" id="cultleader-role-checkbox-label">Cult Leader</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="snitch-role-checkbox">
+                        <label for="snitch-role-checkbox" id="snitch-role-checkbox-label">Snitch</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="cupid-role-checkbox">
+                        <label for="cupid-role-checkbox" id="cupid-role-checkbox-label">Cupid</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="killer-role-checkbox">
+                        <label for="killer-role-checkbox" id="killer-role-checkbox-label">Killer</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="suicidal-role-checkbox">
+                        <label for="suicidal-role-checkbox" id="suicidal-role-checkbox-label">Suicidal</label>
+                    </div>
+                    <div class="role-checkbox">
+                        <input type="checkbox" id="warveteran-role-checkbox">
+                        <label for="warveteran-role-checkbox" id="warveteran-role-checkbox-label">War Veteran</label>
+                    </div>
+                </div>
+            </div>
+            <div class="button-pair">
+                <button class="game-button" id="start-button">START</button>
+                <button class="game-button" id="close-button">CLOSE</button>
+            </div>
+        </div>
+        <div class="game-area gameplay-area">
+            <div class="role-title-group"><span class="" id="role-title-label">You are </span><span class="role-title"
+                    id="role-title"></span></div>
+            <div class="role-image"></div>
+            <div class="players-list" id="players-list-gameplay-area"></div>
+            <div class="role-description" id="role-description"></div>
+            <div class="role-flavour-text" id="role-flavour-text"></div>
+            <div class="button-pair">
+                <button class="game-button" id="new-game-gameplay-button">NEW GAME</button>
+                <button class="game-button" id="leave-gameplay-button">LEAVE</button>
+            </div>
+            <!-- GM exclusive -->
+            <div class="player-id-card">
+                <div class="role-title-group"><span class="" id="role-title-label-player-card">Player is </span><span
+                        class="role-title" id="role-title-player-card"></span></div>
+                <div class="role-description" id="role-description-player-card"></div>
+                <button class="game-button" id="close-player-card-button">CLOSE</button>
+            </div>
+        </div>
+        <hr>
+        <div class="language-select-container">
+            <select id="language-select">
+            </select>
+        </div>
+        <div class="version-number">v0.2</div>
+        <div class="small-links">
+            <a href="https://github.com/juanferrer/mafia">https://github.com/juanferrer/mafia</a>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./scripts/index.js"></script>
 </body>
 
 </html>
