@@ -49,14 +49,13 @@ function joinGame(gameID, playerName, res) {
             // If gameID empty, create new game
             gameID = newGameID();
             // Check again, just to be sure
-            let result = games.doc(gameID).get();
-            // $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = $gameID");
+            // There seems to be no async way of checking if a document exists
+            // eslint-disable-next-line
+            /*let result = await games.doc(gameID).get();
 
-            return res.status(200).send(result);
-
-            if (result) {
+            if (result && result.exists) {
                 gameIDIsUnique = false;
-            }
+            } /**/
         } while (!gameIDIsUnique);
 
         // First player in a game becomes the GM
@@ -69,8 +68,8 @@ function joinGame(gameID, playerName, res) {
 
         // Set gameID, playersData, gameData, playerName, isPlaying and currentDate
         games.doc(gameID).set({
-            "playersData": playersData,
-            "gameData": gameData,
+            "playersData": JSON.stringify(playersData),
+            "gameData": JSON.stringify(gameData),
             "gmName": playerName,
             "isPlaying": false,
             "date": Date.now()
