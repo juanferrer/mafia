@@ -28,17 +28,16 @@ exports.join = (req, res) => {
     if (playerName) {
         joinGame(gameID, playerName, res);
     } else {
-        res.status(400).send(MISSING_PARAMETERS);
+        return res.status(400).send(MISSING_PARAMETERS);
     }
 };
 
 function joinGame(gameID, playerName, res) {
     let gameIDIsUnique = false;
-    let games;
+    let games, playersData, gameData;
     // Make sure we managed to connect
     if (!firestore) {
-        res.status(500).send(UNABLE_TO_CONNECT);
-        return;
+        return res.status(500).send(UNABLE_TO_CONNECT);
     } else {
         games = firestore.collection(COLLECTION_NAME);
     }
@@ -50,62 +49,71 @@ function joinGame(gameID, playerName, res) {
             // If gameID empty, create new game
             gameID = newGameID();
             // Check again, just to be sure
-            let result = games.doc(gameID);
+            let result = games.doc(gameID).get();
             // $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = $gameID");
+
+            return res.status(200).send(result);
+
             if (result) {
                 gameIDIsUnique = false;
             }
         } while (!gameIDIsUnique);
 
         // First player in a game becomes the GM
-        let playersData = {
+        playersData = {
             "players": [playerName]
         };
-        let gameData = {
+        gameData = {
             "data": ""
         };
 
         // Set gameID, playersData, gameData, playerName, isPlaying and currentDate
-        games.set({
-            playersData: playersData,
-            gameData: gameData,
-            gmName: playerName,
-            isPlaying: false,
-            date: Date.now()
+        games.doc(gameID).set({
+            "playersData": playersData,
+            "gameData": gameData,
+            "gmName": playerName,
+            "isPlaying": false,
+            "date": Date.now()
         }).then(() => {
             // If done, send the new gameID back to the host player
-            res.status(200).send(gameID);
+            return res.status(200).send(gameID);
         }).catch(() => {
             // If not, return an error
-            res.status(500).send(NOT_CREATED);
+            return res.status(500).send(NOT_CREATED);
         });
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
-        playersData = games.doc(gameID).get().then(doc => {
+        games.doc(gameID).get().then(doc => {
             if (doc.exists) {
+                doc.get().then((docSnap) => {
+                    // We have a snapshot of the document, get the players and add the new player
+                    let temp = docSnap.get("playersData");
+                    if (temp) {
+                        playersData = JSON.parse(temp);
+                        if (playersData.indexOf(playerName) < 0) {
+                            playersData.push(playerName);
+                        }
+                    } else {
+                        return res.status(404).send(NOT_FOUND);
+                    }
 
+                    // We've added the player, lets make the changes on the DB
+                    doc.update(
+                        { "playersData": playersData }
+                    ).then(() => {
+                        return res.status(200).send(PLAYER);
+                    }).catch(() => {
+                        return res.status(500).send(NOT_JOINED);
+                    });
+
+                });
+            } else {
+                return res.status(404).send(NOT_FOUND);
             }
-        })
-
-        // $result = $mysqli->query("SELECT players FROM games WHERE gameID = '$gameID'");
-        if (true) {
-            // Wait, there is no game with that ID
-            res.status(404).send(NOT_FOUND);
-        }
-
-        // There should be only one game with this ID, so join first one with matched ID
-        // $players = json_decode(($result->fetch_row())[0], true);
-        // $result->close();
-        // Add this player to the players array, and insert back into the entry
-
-        /*if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
-          // Signal the client that the game is ready
-          res.status(200).send(PLAYER);
-        } else {
-          http_response_code(500);
-          res.status(500).send(NOT_JOINED);
-        } /**/
+        }).catch(() => {
+            return res.status(404).send(NOT_FOUND);
+        });
     }
 }
 
