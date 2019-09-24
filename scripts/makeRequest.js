@@ -10,6 +10,8 @@ const SERVER = "https://php-server.byethost9.com/mafia.php";
  * @param {!express:Response} res HTTP response context.
  */
 exports.makeRequest = (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
     /*const data = JSON.stringify({
         "type": req.query.type || "",
         "gameID": req.query.gameID || "",
