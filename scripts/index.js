@@ -1,6 +1,6 @@
 /* globals $ */
 
-const PHPFile = "https://35.237.128.169/mafia.php";
+const PHPFile = "https://http://php-server.byethost9.com/mafia.php";
 
 const Roles = Object.freeze({
     MAFIOSO: "MAFIOSO",
