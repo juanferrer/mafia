@@ -1,5 +1,7 @@
 /* globals $ */
 
+const PHPFile = "https://35.237.128.169/mafia.php";
+
 const Roles = Object.freeze({
     MAFIOSO: "MAFIOSO",
     INNOCENT: "INNOCENT",
@@ -85,7 +87,7 @@ changeTheme(settings.theme);
  * @param {String} playerName
  */
 function joinGame(gameID, playerName) {
-    $.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+    $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
         error: (request, status, error) => {
@@ -99,7 +101,7 @@ function joinGame(gameID, playerName) {
 }
 
 function requestGameStateUpdate() {
-    $.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+    $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "type": "REFRESH" },
         error: (request, status, error) => {
@@ -112,7 +114,7 @@ function requestGameStateUpdate() {
 }
 
 function leaveGame(gameID, playerName) {
-    $.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+    $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
         error: (request, status, error) => {
@@ -136,7 +138,7 @@ function leaveGame(gameID, playerName) {
 }
 
 function setGameActive(gameID, playerName, makeActive) {
-    $.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+    $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "active": makeActive, "type": "SETACTIVE" },
         error: (request, status, error) => {
@@ -159,7 +161,7 @@ function setGameActive(gameID, playerName, makeActive) {
 }
 
 function changeGameData(gameID, playerName, gameData) {
-    $.ajax("https://diabolic-straps.000webhostapp.com/mafia.php", {
+    $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
         error: (request, status, error) => {
