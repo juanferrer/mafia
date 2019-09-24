@@ -1,6 +1,6 @@
 /* globals $ */
 
-const PHPFile = "https://php-server.byethost9.com/mafia.php";
+const PHPFile = "https://us-central1-mafia-253508.cloudfunctions.net/mafia_request";
 
 const Roles = Object.freeze({
     MAFIOSO: "MAFIOSO",
