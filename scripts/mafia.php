@@ -9,9 +9,10 @@ mb_language('uni');
 header('Access-Control-Allow-Origin: juanferrer.github.io');
 header('Access-Control-Allow-Origin: *');
 
-define('DB_NAME', 'DATABASE');
-define('DB_USERNAME', 'USERNAME');
-define('DB_PASSWORD', 'PASSWORD');
+define('HOSTNAME', 'DB_HOST');
+define('DB_NAME', 'DB_NAME');
+define('DB_USERNAME', 'DB_USER');
+define('DB_PASSWORD', 'DB_PASS');
 
 define('SLEEP_TIME', 5);
 
@@ -75,7 +76,7 @@ switch (strtoupper($requestType)) {
 // gameID is a string of 3 alphanumeric caracters
 function joinGame($gameID, $playerName)
 {
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
@@ -91,7 +92,7 @@ function joinGame($gameID, $playerName)
             // If $gameID empty, create new game
             $gameID = newGameID();
             // Count number of rows with $gameID
-            $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = $gameID");
+            $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = '$gameID'");
             if ($result > 0) {
                 // Wait, there is a game already using this ID. Try again
                 $result->close();
@@ -151,7 +152,7 @@ function leaveGame($gameID, $playerName)
         die('GAME ID MISSING');
     }
     // Otherwise, leave game
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
@@ -212,7 +213,7 @@ function leaveGame($gameID, $playerName)
 // Refresh
 function refreshGameState($gameID)
 {
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
@@ -235,7 +236,7 @@ function refreshGameState($gameID)
 
 function changeGameData($gameID, $playerName, $newData)
 {
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
@@ -261,7 +262,7 @@ function changeGameData($gameID, $playerName, $newData)
 
 function changeGameState($gameID, $playerName, $active)
 {
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
@@ -307,7 +308,7 @@ function newGameID()
 // Check if the player is the GM
 function playerIsGM($gameID, $playerName)
 {
-    $mysqli = new mysqli('localhost', DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     if ($mysqli->connect_error) {
         // Unable to connect to DB
