@@ -94,7 +94,7 @@ function joinGame($gameID, $playerName)
             $gameID = newGameID();
             // Count number of rows with $gameID
             $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = '$gameID'");
-            if ($result > 0) {
+            if ($result->fetch_row()[0] > 0) {
                 // Wait, there is a game already using this ID. Try again
                 $result->close();
                 $gameIDIsUnique = false;
@@ -104,7 +104,7 @@ function joinGame($gameID, $playerName)
         // First player in a game becomes the GM
         $playersData = json_encode(['players' => [$playerName]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $gameData = json_encode(['data' => ''], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($result = $mysqli->query("INSERT INTO games VALUES ('$gameID', '$playersData', '$gameData', '$playerName', 0, CURDATE())")) {
+        if ($result = $mysqli->query("INSERT INTO games VALUES ('$gameID', '$playersData', '$gameData', '$playerName', 0, NOW())")) {
             // Now, send new gameID back to the host player
             exit($gameID);
         } else {
