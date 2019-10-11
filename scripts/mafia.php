@@ -7,6 +7,7 @@ mb_http_output('UTF-8');
 mb_language('uni');
 
 header('Access-Control-Allow-Origin: juanferrer.github.io');
+header('Access-Control-Allow-Origin: juanferrer.dev');
 header('Access-Control-Allow-Origin: *');
 
 define('HOSTNAME', 'DB_HOST');
