@@ -1,15 +1,11 @@
 <?php
+include_once 'private.php';
+
 // Inform PHP that we're using UTF-8 strings
 mb_internal_encoding('UTF-8');
-mb_http_input('UTF-8');
-mb_http_output('UTF-8');
 mb_language('uni');
 
-define('HOSTNAME', 'DB_HOST');
-define('DB_NAME', 'DB_NAME');
-define('DB_USERNAME', 'DB_USER');
-define('DB_PASSWORD', 'DB_PASS');
-define('LOG_FILE', '/var/www/mafia/cron.log');
+include_once 'cors.php';
 
 // Connect to DB
 $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);

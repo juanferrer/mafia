@@ -1,19 +1,12 @@
 <?php
+ini_set('display_errors', 1);
+include_once 'private.php';
 
 // Inform PHP that we're using UTF-8 strings
 mb_internal_encoding('UTF-8');
-mb_http_input('UTF-8');
-mb_http_output('UTF-8');
 mb_language('uni');
 
-header('Access-Control-Allow-Origin: juanferrer.github.io');
-header('Access-Control-Allow-Origin: juanferrer.dev');
-header('Access-Control-Allow-Origin: *');
-
-define('HOSTNAME', 'DB_HOST');
-define('DB_NAME', 'DB_NAME');
-define('DB_USERNAME', 'DB_USER');
-define('DB_PASSWORD', 'DB_PASS');
+include_once 'cors.php';
 
 define('SLEEP_TIME', 5);
 
@@ -24,8 +17,6 @@ if (!isset($_POST['type']) || $_POST['type'] === '') {
     http_response_code(400);
     die('MISSING PARAMETERS');
 }
-
-// TODO: Sanitise user input
 
 $requestType = $_POST['type'];
 
@@ -77,34 +68,30 @@ switch (strtoupper($requestType)) {
 // gameID is a string of 3 alphanumeric caracters
 function joinGame($gameID, $playerName)
 {
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
+    $dbh = connectToDatabase();
 
     if (!$gameID) {
 
         // Check that there is no game already using this ID
+        $gameIDIsUnique = true;
+        // If $gameID empty, create new game
+        $gameID = newGameID();
+        // Count number of rows with $gameID
+        $stmt = $dbh->prepare('SELECT COUNT(1) FROM games WHERE gameID = ?');
         do {
-            $gameIDIsUnique = true;
-            // If $gameID empty, create new game
-            $gameID = newGameID();
-            // Count number of rows with $gameID
-            $result = $mysqli->query("SELECT COUNT(1) FROM games WHERE gameID = '$gameID'");
-            if ($result->fetch_row()[0] > 0) {
+            $stmt->execute([$gameID]);
+            $result = $stmt->fetch(PDO::FETCH_NUM);
+            if ($result[0] > 0) {
                 // Wait, there is a game already using this ID. Try again
-                $result->close();
                 $gameIDIsUnique = false;
             }
         } while (!$gameIDIsUnique);
 
         // First player in a game becomes the GM
-        $playersData = json_encode(['players' => [$playerName]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $gameData = json_encode(['data' => ''], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($result = $mysqli->query("INSERT INTO games VALUES ('$gameID', '$playersData', '$gameData', '$playerName', 0, NOW())")) {
+        $playersData = json_encode([$playerName], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $gameData = json_encode([], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $stmt = $dbh->prepare("INSERT INTO games VALUES (?, ?, ?, ?, 0, NOW())");
+        if ($stmt->execute([$gameID, $playersData, $gameData, $playerName])) {
             // Now, send new gameID back to the host player
             exit($gameID);
         } else {
@@ -115,22 +102,24 @@ function joinGame($gameID, $playerName)
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
-        $result = $mysqli->query("SELECT players FROM games WHERE gameID = '$gameID'");
-
-        if ($result->num_rows <= 0) {
+        $stmt = $dbh->prepare('SELECT players FROM games WHERE gameID = ?');
+        $stmt->execute([$gameID]);
+        $result = $stmt->fetch(PDO::FETCH_NUM);
+        if (count($result) <= 0) {
             // Wait, there is no game with that ID
             http_response_code(404);
             die('GAME NOT FOUND');
         }
 
         // There should be only one game with this ID, so join first one with matched ID
-        $players = json_decode(($result->fetch_row())[0], true);
-        $result->close();
+        $players = json_decode($result[0], true);
         // Add this player to the players array, and insert back into the entry
-        array_push($players['players'], $playerName);
+        array_push($players, $playerName);
         $playersData = json_encode($players, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
+        $stmt = $dbh->prepare('UPDATE games SET players = ? WHERE gameID = ?');
+
+        if ($stmt->execute([$playersData, $gameID])) {
             // Signal the client that the game is ready
             exit('PLAYER');
         } else {
@@ -144,7 +133,7 @@ function joinGame($gameID, $playerName)
     $_SESSION['playerName'] = $playerName;
 }
 
-//
+// Leave the game with the specified ID or delete it if called by the last player
 function leaveGame($gameID, $playerName)
 {
     // If $gameID empty, ignore
@@ -153,16 +142,12 @@ function leaveGame($gameID, $playerName)
         die('GAME ID MISSING');
     }
     // Otherwise, leave game
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
+    $dbh = connectToDatabase();
 
     if (playerIsGM($gameID, $playerName)) {
-        if ($result = $mysqli->query("UPDATE games SET isPlaying = 0 WHERE gameID = '$gameID'")) {
+        $stmt = $dbh->prepare('UPDATE games SET isPlaying = 0 WHERE gameID = ?');
+        if ($stmt->execute([$gameID])) {
             // All good, keep going
         } else {
             http_response_code(500);
@@ -170,23 +155,24 @@ function leaveGame($gameID, $playerName)
         }
     }
 
-    $result = $mysqli->query("SELECT players FROM games WHERE gameID = '$gameID'");
+    $stmt = $dbh->prepare('SELECT players FROM games WHERE gameID = ?');
+    $stmt->execute([$gameID]);
+    $result = $stmt->fetch(PDO::FETCH_NUM);
 
-    if ($result->num_rows <= 0) {
+    if (count($result) <= 0) {
         // Wait, there is no game with that ID
         http_response_code(404);
         die('GAME NOT FOUND');
     }
 
     // There should be only one game with this ID, so join first one with matched ID
-    $data = $result->fetch_row()[0];
-    $result->close();
-
-    $players = json_decode($data, true)['players'];
+    $data = $result[0];
+    $players = json_decode($data, true);
 
     if (count($players) === 1) {
         // We are the last player in the game, remove the DB entry
-        if ($result = $mysqli->query("DELETE FROM games WHERE gameID = '$gameID'")) {
+        $stmt = $dbh->prepare('DELETE FROM games WHERE gameID = ?');
+        if ($stmt->execute([$gameID])) {
             exit('DELETED');
         } else {
             http_response_code(500);
@@ -200,9 +186,10 @@ function leaveGame($gameID, $playerName)
         $players = array_values($players);
     }
 
-    $playersData = json_encode(['players' => $players], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $playersData = json_encode($players, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-    if ($result = $mysqli->query("UPDATE games SET players = '$playersData' WHERE gameID = '$gameID'")) {
+    $stmt = $dbh->prepare('UPDATE games SET players = ? WHERE gameID = ?');
+    if ($stmt->execute([$playersData, $gameID])) {
         // Signal the client that they have disconnected
         exit('DISCONNECTED');
     } else {
@@ -214,41 +201,30 @@ function leaveGame($gameID, $playerName)
 // Refresh
 function refreshGameState($gameID)
 {
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $dbh = connectToDatabase();
 
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
+    $stmt = $dbh->prepare('SELECT gameData, players, isPlaying FROM games WHERE gameID = ?');
+    $stmt->execute([$gameID]);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $result = $mysqli->query("SELECT gameData, players, isPlaying FROM games WHERE gameID = '$gameID'");
-
-    if ($result->num_rows <= 0) {
+    if (count($result) <= 0) {
         // No data retrieved
         http_response_code(404);
         die('GAME NOT FOUND');
     }
-    $data = $result->fetch_assoc();
-    $result->close();
 
-    exit(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    exit(json_encode($result[0], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
 function changeGameData($gameID, $playerName, $newData)
 {
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
+    $dbh = connectToDatabase();
 
     if (playerIsGM($gameID, $playerName)) {
-        $gameData = json_encode(['data' => $newData], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $gameData = json_encode($newData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        if ($result = $mysqli->query("UPDATE games SET gameData = '$gameData' WHERE gameID = '$gameID'")) {
+        $stmt = $dbh->prepare('UPDATE games SET gameData = ? WHERE gameID = ?');
+        if ($stmt->execute([$gameData, $gameID])) {
             // Signal the client that the data has been updated
             exit();
         } else {
@@ -263,15 +239,11 @@ function changeGameData($gameID, $playerName, $newData)
 
 function changeGameState($gameID, $playerName, $active)
 {
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $$dbh = connectToDatabase();
 
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
     if (playerIsGM($gameID, $playerName)) {
-        if ($result = $mysqli->query("UPDATE games SET isPlaying = $active WHERE gameID = '$gameID'")) {
+        $stmt = $dbh->prepare('UPDATE games SET isPlaying = ? WHERE gameID = ?');
+        if ($stmt->execute([$active, $gameID])) {
             // Signal the client that the state has been changed
             exit();
         } else {
@@ -287,6 +259,22 @@ function changeGameState($gameID, $playerName, $active)
 //endregion
 
 //region Helper functions
+
+function connectToDatabase()
+{
+    $dsn = 'mysql:host=' . HOSTNAME . ';dbname=' . DB_NAME . ';charset=utf8;';
+
+    try
+    {
+        $dbh = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $dbh;
+    } catch (PDOException $e) {
+        // Unable to connect to DB
+        http_response_code(500);
+        die('UNABLE TO CONNECT');
+    }
+}
 
 function randomString($length = 3)
 {
@@ -309,26 +297,19 @@ function newGameID()
 // Check if the player is the GM
 function playerIsGM($gameID, $playerName)
 {
-    $mysqli = new mysqli(HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $dbh = connectToDatabase();
 
-    if ($mysqli->connect_error) {
-        // Unable to connect to DB
-        http_response_code(500);
-        die('UNABLE TO CONNECT');
-    }
+    $stmt = $dbh->prepare('SELECT gmName FROM games WHERE gameID = ?');
+    $stmt->execute([$gameID]);
+    $result = $stmt->fetch(PDO::FETCH_NUM);
 
-    $result = $mysqli->query("SELECT gmName FROM games WHERE gameID = '$gameID'");
-
-    if ($result->num_rows <= 0) {
+    if (count($result) <= 0) {
         // Wait, there is no game with that ID
         http_response_code(404);
         die('GAME NOT FOUND');
     }
 
-    $data = $result->fetch_assoc();
-    $result->close();
-
-    $isGM = $data['gmName'] === $playerName;
+    $isGM = $result[0] === $playerName;
 
     return $isGM;
 }
