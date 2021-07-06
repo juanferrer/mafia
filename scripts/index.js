@@ -221,9 +221,9 @@ function updateGameState(data, status, request) {
         let json = JSON.parse(data);
 
         // let gameData = JSON.parse(json.gameData);
-        let newPlayers = JSON.parse(json.players);
-        let isPlaying = JSON.parse(json.isPlaying);
-        gameData = JSON.parse(json.gameData);
+        let newPlayers = json.players;
+        let isPlaying = json.isPlaying;
+        gameData = json.gameData;
 
         // Now, do what is needed with the received data
 
