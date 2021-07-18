@@ -140,7 +140,7 @@ function leaveGame(gameID, playerName) {
 function setGameActive(gameID, playerName, makeActive) {
     $.ajax(PHPFile, {
         type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "active": makeActive, "type": "SETACTIVE" },
+        data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
         error: (request, status, error) => {
             debug.log("Request: " + request);
             debug.log("Status: " + status);
@@ -163,7 +163,7 @@ function setGameActive(gameID, playerName, makeActive) {
 function changeGameData(gameID, playerName, gameData) {
     $.ajax(PHPFile, {
         type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
+        data: { "gameID": gameID, "playerName": playerName, "newData": JSON.stringify(gameData), "type": "CHANGE" },
         error: (request, status, error) => {
             debug.log("Request: " + request);
             debug.log("Status: " + status);

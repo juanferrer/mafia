@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+//ini_set('display_errors', 1);
 include_once 'private.php';
 
 // Inform PHP that we're using UTF-8 strings
@@ -22,36 +22,36 @@ $requestType = $_POST['type'];
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
-        $gameID = escapeString($_POST['gameID']);
-        $playerName = escapeString($_POST['playerName']);
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
         // Join the current game or create one if none exists
         joinGame($gameID, $playerName);
         break;
     case 'LEAVE':
         // Leave the current game
-        $gameID = escapeString($_POST['gameID']);
-        $playerName = escapeString($_POST['playerName']);
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
         //
         leaveGame($gameID, $playerName);
         break;
     case 'REFRESH':
         // Get the updated game state
-        $gameID = escapeString($_POST['gameID']);
+        $gameID = $_POST['gameID'];
         //
         refreshGameState($gameID);
         break;
     case 'CHANGE':
         // Make changes to data
-        $gameID = escapeString($_POST['gameID']);
-        $playerName = escapeString($_POST['playerName']);
-        $newData = escapeString($_POST['newData']);
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
+        $newData = $_POST['newData'];
         //
         changeGameData($gameID, $playerName, $newData);
         break;
     case 'SETACTIVE':
-        $gameID = escapeString($_POST['gameID']);
-        $playerName = escapeString($_POST['playerName']);
-        $active = escapeString($_POST['active']);
+        $gameID = $_POST['gameID'];
+        $playerName = $_POST['playerName'];
+        $active = $_POST['active'];
         // Start/stop game and update date
         changeGameState($gameID, $playerName, $active);
 
@@ -88,8 +88,8 @@ function joinGame($gameID, $playerName)
         } while (!$gameIDIsUnique);
 
         // First player in a game becomes the GM
-        $playersData = json_encode([$playerName], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $gameData = json_encode([], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $playersData = json_encode([$playerName]);
+        $gameData = json_encode(new stdClass);
         $stmt = $dbh->prepare("INSERT INTO games VALUES (?, ?, ?, ?, 0, NOW())");
         if ($stmt->execute([$gameID, $playersData, $gameData, $playerName])) {
             // Now, send new gameID back to the host player
@@ -98,7 +98,6 @@ function joinGame($gameID, $playerName)
             http_response_code(500);
             die('GAME NOT CREATED');
         }
-
     } else {
         // Otherwise, join game with passed gameID
         // Get whatever players are now in the database
@@ -115,7 +114,7 @@ function joinGame($gameID, $playerName)
         $players = json_decode($result[0], true);
         // Add this player to the players array, and insert back into the entry
         array_push($players, $playerName);
-        $playersData = json_encode($players, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $playersData = json_encode($players);
 
         $stmt = $dbh->prepare('UPDATE games SET players = ? WHERE gameID = ?');
 
@@ -186,7 +185,7 @@ function leaveGame($gameID, $playerName)
         $players = array_values($players);
     }
 
-    $playersData = json_encode($players, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $playersData = json_encode($players);
 
     $stmt = $dbh->prepare('UPDATE games SET players = ? WHERE gameID = ?');
     if ($stmt->execute([$playersData, $gameID])) {
@@ -205,15 +204,16 @@ function refreshGameState($gameID)
 
     $stmt = $dbh->prepare('SELECT gameData, players, isPlaying FROM games WHERE gameID = ?');
     $stmt->execute([$gameID]);
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
     if (count($result) <= 0) {
         // No data retrieved
         http_response_code(404);
         die('GAME NOT FOUND');
     }
 
-    exit(json_encode($result[0], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    exit(json_encode(array('gameData'=>json_decode($result['gameData']),
+                           'players'=>json_decode($result['players']),
+                           'isPlaying'=>json_decode($result['isPlaying']))));
 }
 
 function changeGameData($gameID, $playerName, $newData)
@@ -221,12 +221,12 @@ function changeGameData($gameID, $playerName, $newData)
     $dbh = connectToDatabase();
 
     if (playerIsGM($gameID, $playerName)) {
-        $gameData = json_encode($newData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
+        $gameData = json_encode($newData);
         $stmt = $dbh->prepare('UPDATE games SET gameData = ? WHERE gameID = ?');
         if ($stmt->execute([$gameData, $gameID])) {
             // Signal the client that the data has been updated
-            exit();
+            exit("CHANGED DATA");
         } else {
             http_response_code(500);
             die('UNABLE TO UPDATE');
@@ -239,13 +239,13 @@ function changeGameData($gameID, $playerName, $newData)
 
 function changeGameState($gameID, $playerName, $active)
 {
-    $$dbh = connectToDatabase();
+    $dbh = connectToDatabase();
 
     if (playerIsGM($gameID, $playerName)) {
         $stmt = $dbh->prepare('UPDATE games SET isPlaying = ? WHERE gameID = ?');
         if ($stmt->execute([$active, $gameID])) {
             // Signal the client that the state has been changed
-            exit();
+            exit("CHANGED STATE");
         } else {
             http_response_code(500);
             die('UNABLE TO UPDATE');
@@ -260,12 +260,16 @@ function changeGameState($gameID, $playerName, $active)
 
 //region Helper functions
 
+function isJSON($string)
+{
+    return (is_null(json_decode($string))) ? false : true;
+}
+
 function connectToDatabase()
 {
     $dsn = 'mysql:host=' . HOSTNAME . ';dbname=' . DB_NAME . ';charset=utf8;';
 
-    try
-    {
+    try {
         $dbh = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $dbh;
@@ -298,7 +302,6 @@ function newGameID()
 function playerIsGM($gameID, $playerName)
 {
     $dbh = connectToDatabase();
-
     $stmt = $dbh->prepare('SELECT gmName FROM games WHERE gameID = ?');
     $stmt->execute([$gameID]);
     $result = $stmt->fetch(PDO::FETCH_NUM);
@@ -312,20 +315,6 @@ function playerIsGM($gameID, $playerName)
     $isGM = $result[0] === $playerName;
 
     return $isGM;
-}
-
-// To avoid any code injection, we will escape:
-// ' (single quote)
-// " (double quote)
-// \ (backslash)
-// $ (dollar sign)
-function escapeString($string)
-{
-    if (is_array($string)) {
-        return $string;
-    }
-
-    return $escapedString = str_replace('$', '\\$', addslashes($string));
 }
 
 //endregion
