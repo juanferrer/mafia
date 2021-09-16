@@ -163,7 +163,7 @@ function setGameActive(gameID, playerName, makeActive) {
 function changeGameData(gameID, playerName, gameData) {
     $.ajax(PHPFile, {
         type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "newData": JSON.stringify(gameData), "type": "CHANGE" },
+        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
         error: (request, status, error) => {
             debug.log("Request: " + request);
             debug.log("Status: " + status);
@@ -423,7 +423,7 @@ function assignRoles(players) {
     }
 
     rolesArray = shuffle(rolesArray);
-    // Before assigning the roles, remove tha GM from the players and give them
+    // Before assigning the roles, remove the GM from the players and give them
     // the role directly
     players.splice(players.indexOf(playerName), 1);
     gameData.roles[playerName] = "GM";
