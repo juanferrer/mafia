@@ -1,12 +1,15 @@
 <?php
 //ini_set('display_errors', 1);
-include_once 'private.php';
+require_once 'private.php';
 
 // Inform PHP that we're using UTF-8 strings
 mb_internal_encoding('UTF-8');
 mb_language('uni');
 
-include_once 'cors.php';
+// Server-side analytics
+
+// Cors
+require_once 'cors.php';
 
 define('SLEEP_TIME', 5);
 
@@ -18,12 +21,30 @@ if (!isset($_POST['type']) || $_POST['type'] === '') {
     die('MISSING PARAMETERS');
 }
 
+// Prepare request info
 $requestType = $_POST['type'];
+
+$sessionId = session_id();
+$timestamp = $_SERVER['REQUEST_TIME'];
+$url = $_SERVER['REQUEST_URI'];
+$host = "";
+$path = [];
+$referrer = $_SERVER['HTTP_REFERER'];
+$osFamily = "";
+$osVersion = "";
+
+// Extract location from IP
+$location = json_decode(file_get_contents("https://geoplugin.net/json.gp?ip=" . $_SERVER['REMOVE_ADDR']));
+$countryISOCode = $location['geoplugin_countryCode'];
+$subdivisionsISOCode = $location['geoplugin_regionCode'];
+$cityName = $location['geoplugin_city'];
+$language = "";
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
         $gameID = $_POST['gameID'];
         $playerName = $_POST['playerName'];
+        trackRequest('JOIN');
         // Join the current game or create one if none exists
         joinGame($gameID, $playerName);
         break;
@@ -317,4 +338,28 @@ function playerIsGM($gameID, $playerName)
     return $isGM;
 }
 
+//endregion
+
+//region Analytics functions
+function trackRequest($requestType)
+{
+    Segment::track(array(
+        "anonymousId" => $sessionId,
+        "event" => $requestType,
+        "timestamp" => $timestamp,
+        "context" => array(
+            "locale" => $language,
+            "location" => array(
+                "city" => $cityName,
+                "country" => $countryISOCode,
+                "region" => $subdivisionsISOCode
+            ),
+            "os" => array(
+                "name" => $osFamily,
+                "version" => $osVersion
+            ),
+            "referrer" => $referrer
+        ),
+    ));
+}
 //endregion
