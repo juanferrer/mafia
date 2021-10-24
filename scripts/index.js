@@ -105,6 +105,69 @@ function calculateRoles() {
     return numberOfRoles;
 }
 
+function requestGameStateUpdate() {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": game.gameID, "type": "REFRESH" },
+        error: (request, status, error) => {
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+        },
+        success: updateGameState
+    });
+}
+
+/** Populate the gameplay area with the appropriate role */
+function populateGameplayArea(playerRole, isGM, players) {
+    const lcRole = playerRole.toLowerCase();
+    $("#role-title-label").html(i18n["role-title-label"]);
+    $("#role-title").html(i18n[`${lcRole}-role-title`]);
+    // TODO: Populate with the appropriate image
+    $("#role-role-description").html(i18n[`${lcRole}-role-description`]);
+    $("#role-description").html(i18n[`${lcRole}-role-description`]);
+    // Get a random string from the flavour text array
+    $("#role-flavour-text").html(i18n[`${lcRole}-role-flavour-text`][randomInt(i18n[`${lcRole}-role-flavour-text`].length)]);
+
+    // For GM, add a player list
+    if (isGM) {
+        $("#players-list-gameplay-area").html("");
+        players.forEach(p => {
+            $("#players-list-gameplay-area").append(`<span onclick="showPlayerCard('${p}')">${p}</span>`);
+        });
+    }
+}
+
+/** Update the counter's display */
+function updateCounters() {
+    // Update each counter button
+    $(".counter-button").each((index, counterButton) => {
+        let display = $(`#${counterButton.getAttribute("data-display")}`);
+        const number = parseInt(display.attr("data-value"));
+
+        const rolesUnassigned = parseInt($("#innocent-counter-display").attr("data-value"));
+
+        if (counterButton.classList.contains("counter-increment-button")) {
+            if (rolesUnassigned <= 0) {
+                counterButton.setAttribute("disabled", true);
+            } else {
+                counterButton.removeAttribute("disabled");
+            }
+        } else if (counterButton.classList.contains("counter-decrement-button")) {
+            if (number <= 0) {
+                counterButton.setAttribute("disabled", true);
+            } else {
+                counterButton.removeAttribute("disabled");
+            }
+        }
+    });
+
+    // Update each counter display
+    $(".counter-display").each((index, display) => {
+        display.innerHTML = $(display).attr("data-value");
+    });
+}
+
 /**
  * Main function. It deals with changes in the server DB
  */
@@ -335,36 +398,6 @@ function assignRoles(players, playerName) {
     return gameData;
 }
 
-/** Update the counter's display */
-function updateCounters() {
-    // Update each counter button
-    $(".counter-button").each((index, counterButton) => {
-        let display = $(`#${counterButton.getAttribute("data-display")}`);
-        const number = parseInt(display.attr("data-value"));
-
-        const rolesUnassigned = parseInt($("#innocent-counter-display").attr("data-value"));
-
-        if (counterButton.classList.contains("counter-increment-button")) {
-            if (rolesUnassigned <= 0) {
-                counterButton.setAttribute("disabled", true);
-            } else {
-                counterButton.removeAttribute("disabled");
-            }
-        } else if (counterButton.classList.contains("counter-decrement-button")) {
-            if (number <= 0) {
-                counterButton.setAttribute("disabled", true);
-            } else {
-                counterButton.removeAttribute("disabled");
-            }
-        }
-    });
-
-    // Update each counter display
-    $(".counter-display").each((index, display) => {
-        display.innerHTML = $(display).attr("data-value");
-    });
-}
-
 /**
  * Get a random in between 0 and max
  * @param {Number} max
@@ -372,26 +405,6 @@ function updateCounters() {
  */
 function randomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
-}
-
-/** Populate the gameplay area with the appropriate role */
-function populateGameplayArea(playerRole, isGM, players) {
-    const lcRole = playerRole.toLowerCase();
-    $("#role-title-label").html(i18n["role-title-label"]);
-    $("#role-title").html(i18n[`${lcRole}-role-title`]);
-    // TODO: Populate with the appropriate image
-    $("#role-role-description").html(i18n[`${lcRole}-role-description`]);
-    $("#role-description").html(i18n[`${lcRole}-role-description`]);
-    // Get a random string from the flavour text array
-    $("#role-flavour-text").html(i18n[`${lcRole}-role-flavour-text`][randomInt(i18n[`${lcRole}-role-flavour-text`].length)]);
-
-    // For GM, add a player list
-    if (isGM) {
-        $("#players-list-gameplay-area").html("");
-        players.forEach(p => {
-            $("#players-list-gameplay-area").append(`<span onclick="showPlayerCard('${p}')">${p}</span>`);
-        });
-    }
 }
 
 /**
@@ -470,6 +483,7 @@ function showPlayerCard(name) {
 function resetGameDetails() {
     game.gameID = "";
     game.playerName = "";
+    game.isGM = false;
 }
 
 // #endregion
@@ -495,20 +509,7 @@ function resetGameDetails() {
     });
 }
 
-function requestGameStateUpdate() {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "type": "REFRESH" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: updateGameState
-    });
-}
-
-function leaveGame(gameID, playerName, isGM) {
+function leaveGame(gameID, playerName) {
     $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
@@ -523,7 +524,6 @@ function leaveGame(gameID, playerName, isGM) {
             debug.log(`Request ${request}`);
 
             resetGameDetails();
-            isGM = false;
             failedAttempts = 0;
             clearTimeout(refreshTimeout);
             refreshTimeout = undefined;
