@@ -73,10 +73,12 @@ let debug = {
     }
 };
 
-populateLanguageSelect();
-loadSettings();
-doI18N(settings.languageCode);
-changeTheme(settings.theme);
+function main() {
+    populateLanguageSelect();
+    loadSettings();
+    doI18N(settings.languageCode);
+    changeTheme(settings.theme);
+}
 
 // #region API calls
 
@@ -666,3 +668,5 @@ window.addEventListener("beforeunload", () => {
 });
 
 // #endregion
+
+main();
