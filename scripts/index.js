@@ -126,8 +126,7 @@ function leaveGame(gameID, playerName) {
             debug.log(`Status: status`);
             debug.log(`Request: request`);
 
-            gameID = "";
-            playerName = "";
+            resetGameDetails();
             isGM = false;
             failedAttempts = 0;
             clearTimeout(refreshTimeout);
@@ -324,7 +323,7 @@ function goToLobby(data, status, request) {
  * @returns {any[]}
  */
 function shuffle(arr) {
-    var j, x, i;
+    let j, x, i;
     for (i = arr.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
         x = arr[i];
@@ -562,6 +561,14 @@ function showPlayerCard(name) {
         $("#role-description-player-card").html(i18n[`${lcRole}-role-description`]);
         $(".player-id-card").css("visibility", "visible");
     }
+}
+
+/**
+ * Reset the details from last game
+ */
+function resetGameDetails() {
+    gameID = "";
+    playerName = "";
 }
 
 // #endregion
