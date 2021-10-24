@@ -43,7 +43,6 @@ switch (strtoupper($requestType)) {
     case 'JOIN':
         $gameID = $_POST['gameID'];
         $playerName = $_POST['playerName'];
-        trackRequest('JOIN');
         // Join the current game or create one if none exists
         joinGame($gameID, $playerName);
         break;
@@ -337,28 +336,4 @@ function playerIsGM($gameID, $playerName)
     return $isGM;
 }
 
-//endregion
-
-//region Analytics functions
-function trackRequest($requestType)
-{
-    Segment::track(array(
-        "anonymousId" => $sessionId,
-        "event" => $requestType,
-        "timestamp" => $timestamp,
-        "context" => array(
-            "locale" => $language,
-            "location" => array(
-                "city" => $cityName,
-                "country" => $countryISOCode,
-                "region" => $subdivisionsISOCode
-            ),
-            "os" => array(
-                "name" => $osFamily,
-                "version" => $osVersion
-            ),
-            "referrer" => $referrer
-        ),
-    ));
-}
 //endregion
