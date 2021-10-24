@@ -256,7 +256,7 @@ function goToLobby(data, status, request) {
         if (data === "PLAYER") {
             game.isGM = false;
         } else {
-            isGM = true;
+            game.isGM = true;
             game.gameID = data;
         }
 
