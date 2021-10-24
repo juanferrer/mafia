@@ -118,6 +118,15 @@ function requestGameStateUpdate() {
     });
 }
 
+/**
+ * Get a random in between 0 and max
+ * @param {Number} max
+ * @returns {Number}
+ */
+ function randomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 /** Populate the gameplay area with the appropriate role */
 function populateGameplayArea(playerRole, isGM, players) {
     const lcRole = playerRole.toLowerCase();
@@ -396,15 +405,6 @@ function assignRoles(players, playerName) {
     });
 
     return gameData;
-}
-
-/**
- * Get a random in between 0 and max
- * @param {Number} max
- * @returns {Number}
- */
-function randomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
 }
 
 /**
