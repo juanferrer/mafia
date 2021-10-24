@@ -6,10 +6,9 @@ require_once 'private.php';
 mb_internal_encoding('UTF-8');
 mb_language('uni');
 
-// Server-side analytics
-
-// Cors
 require_once 'cors.php';
+
+// Server-side analytics
 
 define('SLEEP_TIME', 5);
 
