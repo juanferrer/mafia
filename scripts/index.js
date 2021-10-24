@@ -76,112 +76,6 @@ let debug = {
     }
 };
 
-function main() {
-    populateLanguageSelect();
-    loadSettings();
-    doI18N(settings.languageCode);
-    changeTheme(settings.theme);
-}
-
-// #region API calls
-
-/**
- * Start or join a game with the given gameID
- * @param {String} gameID
- * @param {String} playerName
- */
-function joinGame(gameID, playerName) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
-        error: (request, status, error) => {
-            debug.log(`Request: ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-            alert(i18n["game-not-found-alert"]);
-        },
-        success: goToLobby
-    });
-}
-
-function requestGameStateUpdate() {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "type": "REFRESH" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: updateGameState
-    });
-}
-
-function leaveGame(gameID, playerName, isGM) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-
-            resetGameDetails();
-            isGM = false;
-            failedAttempts = 0;
-            clearTimeout(refreshTimeout);
-            refreshTimeout = undefined;
-        }
-    });
-}
-
-function setGameActive(gameID, playerName, makeActive) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-            //$(".lobby-area").css("display", "none");
-            $(".lobby-area").css("height", "0");
-            // $(".gameplay-area").css("display", "flex");
-            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
-            //clearTimeout(refreshTimeout);
-            //refreshTimeout = undefined;
-        }
-    });
-}
-
-function changeGameData(gameID, playerName, gameData) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-            setGameActive(gameID, playerName, true);
-        }
-    });
-}
-// #endregion
-
 // #region Other functions
 
 /**
@@ -580,6 +474,106 @@ function resetGameDetails() {
 
 // #endregion
 
+// #region API calls
+
+/**
+ * Start or join a game with the given gameID
+ * @param {String} gameID
+ * @param {String} playerName
+ */
+ function joinGame(gameID, playerName) {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
+        error: (request, status, error) => {
+            debug.log(`Request: ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+            alert(i18n["game-not-found-alert"]);
+        },
+        success: goToLobby
+    });
+}
+
+function requestGameStateUpdate() {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": gameID, "type": "REFRESH" },
+        error: (request, status, error) => {
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+        },
+        success: updateGameState
+    });
+}
+
+function leaveGame(gameID, playerName, isGM) {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
+        error: (request, status, error) => {
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+        },
+        success: (data, status, request) => {
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
+
+            resetGameDetails();
+            isGM = false;
+            failedAttempts = 0;
+            clearTimeout(refreshTimeout);
+            refreshTimeout = undefined;
+        }
+    });
+}
+
+function setGameActive(gameID, playerName, makeActive) {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
+        error: (request, status, error) => {
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+        },
+        success: (data, status, request) => {
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
+            //$(".lobby-area").css("display", "none");
+            $(".lobby-area").css("height", "0");
+            // $(".gameplay-area").css("display", "flex");
+            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
+            //clearTimeout(refreshTimeout);
+            //refreshTimeout = undefined;
+        }
+    });
+}
+
+function changeGameData(gameID, playerName, gameData) {
+    $.ajax(PHPFile, {
+        type: "POST",
+        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
+        error: (request, status, error) => {
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
+        },
+        success: (data, status, request) => {
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
+            setGameActive(gameID, playerName, true);
+        }
+    });
+}
+
+// #endregion
+
 // #region Event handlers
 
 $("#theme-button").click(() => {
@@ -673,5 +667,13 @@ window.addEventListener("beforeunload", () => {
 });
 
 // #endregion
+
+
+function main() {
+    populateLanguageSelect();
+    loadSettings();
+    doI18N(settings.languageCode);
+    changeTheme(settings.theme);
+}
 
 main();
