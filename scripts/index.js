@@ -40,7 +40,7 @@ const AnimationTimer = 600;
 let gameID = "";
 let playerName = "";
 let isGM = false;
-let refreshTime = 2000;
+const refreshTime = 2000;
 let refreshTimeout;
 let failedAttempts = 0;
 let i18n = {};
@@ -57,7 +57,7 @@ let settings = {
 // be added to this object in the following form:
 // language-code: native-name
 // (e.g. en: "English", es: "Español")
-let languages = {
+const languages = {
     en: "English",
     es: "Español",
     ru: "Русский",
@@ -65,13 +65,12 @@ let languages = {
 
 let debug = {
     dev: true,
-};
-debug.log = function (msg) {
-    if (debug.dev) console.log(msg); // eslint-disable-line no-console
-};
-
-debug.error = function (msg) {
-    if (debug.dev) console.error(msg); // eslint-disable-line no-console
+    log: msg => {
+        if (debug.dev) console.log(msg); // eslint-disable-line no-console
+    },
+    error: msg => {
+        if (debug.dev) console.error(msg); // eslint-disable-line no-console
+    }
 };
 
 populateLanguageSelect();
@@ -91,9 +90,9 @@ function joinGame(gameID, playerName) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
         error: (request, status, error) => {
-            debug.log("Request: " + request);
-            debug.log("Status: " + status);
-            debug.log("Error: " + error);
+            debug.log(`Request: request`);
+            debug.log(`Status: status`);
+            debug.log(`Error: error`);
             alert(i18n["game-not-found-alert"]);
         },
         success: goToLobby
@@ -105,9 +104,9 @@ function requestGameStateUpdate() {
         type: "POST",
         data: { "gameID": gameID, "type": "REFRESH" },
         error: (request, status, error) => {
-            debug.log("Request: " + request);
-            debug.log("Status: " + status);
-            debug.log("Error: " + error);
+            debug.log(`Request: request`);
+            debug.log(`Status: status`);
+            debug.log(`Error: error`);
         },
         success: updateGameState
     });
@@ -118,14 +117,14 @@ function leaveGame(gameID, playerName) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
         error: (request, status, error) => {
-            debug.log("Request: " + request);
-            debug.log("Status: " + status);
-            debug.log("Error: " + error);
+            debug.log(`Request: request`);
+            debug.log(`Status: status`);
+            debug.log(`Error: error`);
         },
         success: (data, status, request) => {
-            debug.log("Data: " + data);
-            debug.log("Status: " + status);
-            debug.log("Request: " + request);
+            debug.log(`Data: data`);
+            debug.log(`Status: status`);
+            debug.log(`Request: request`);
 
             gameID = "";
             playerName = "";
@@ -142,14 +141,14 @@ function setGameActive(gameID, playerName, makeActive) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
         error: (request, status, error) => {
-            debug.log("Request: " + request);
-            debug.log("Status: " + status);
-            debug.log("Error: " + error);
+            debug.log(`Request: request`);
+            debug.log(`Status: status`);
+            debug.log(`Error: error`);
         },
         success: (data, status, request) => {
-            debug.log("Data: " + data);
-            debug.log("Status: " + status);
-            debug.log("Request: " + request);
+            debug.log(`Data: data`);
+            debug.log(`Status: status`);
+            debug.log(`Request: request`);
             //$(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
@@ -165,14 +164,14 @@ function changeGameData(gameID, playerName, gameData) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
         error: (request, status, error) => {
-            debug.log("Request: " + request);
-            debug.log("Status: " + status);
-            debug.log("Error: " + error);
+            debug.log(`Request: request`);
+            debug.log(`Status: status`);
+            debug.log(`Error: error`);
         },
         success: (data, status, request) => {
-            debug.log("Data: " + data);
-            debug.log("Status: " + status);
-            debug.log("Request: " + request);
+            debug.log(`Data: data`);
+            debug.log(`Status: status`);
+            debug.log(`Request: request`);
             setGameActive(gameID, playerName, true);
         }
     });
@@ -212,17 +211,17 @@ function calculateRoles() {
  * Main function. It deals with changes in the server DB
  */
 function updateGameState(data, status, request) {
-    debug.log("Data: " + data);
-    debug.log("Status: " + status);
+    debug.log(`Data: data`);
+    debug.log(`Status: status`);
 
     if (request.status === 200) {
         failedAttempts = 0;
 
-        let json = JSON.parse(data);
+        const json = JSON.parse(data);
 
         // let gameData = JSON.parse(json.gameData);
-        let newPlayers = json.players;
-        let isPlaying = json.isPlaying;
+        const newPlayers = json.players;
+        const isPlaying = json.isPlaying;
         gameData = json.gameData;
 
         // Now, do what is needed with the received data
@@ -239,7 +238,7 @@ function updateGameState(data, status, request) {
 
                 // Update the number of innocent players. Innocent display should
                 // be the number of players that have no special role
-                let unassignedRoles = players.length - calculateRoles() - 1;
+                const unassignedRoles = players.length - calculateRoles() - 1;
                 $("#innocent-counter-display").attr("data-value", unassignedRoles);
                 updateCounters();
 
@@ -288,9 +287,9 @@ function updateGameState(data, status, request) {
  * @param {String} request
  */
 function goToLobby(data, status, request) {
-    debug.log("Data: " + data);
-    debug.log("Status: " + status);
-    debug.log("Request: " + request);
+    debug.log(`Data: data`);
+    debug.log(`Status: status`);
+    debug.log(`Request: request`);
 
     if (request.status === 200) {
         if (data === "PLAYER") {
@@ -369,7 +368,7 @@ function doI18N(languageCode) {
         $("#join-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
 
         if (playerRole) {
-            let lcRole = playerRole.toLowerCase();
+            const lcRole = playerRole.toLowerCase();
             // Populate the strings for the role too if one is assigned
             $("#role-role-description").html(i18n[`${lcRole}-role-description`]);
             $("#role-description").html(i18n[`${lcRole}-role-description`]);
@@ -379,7 +378,7 @@ function doI18N(languageCode) {
 
 /** Populate language-select with the available translations */
 function populateLanguageSelect() {
-    for (let lang in languages) {
+    for (const lang in languages) {
         $("#language-select").append(`<option value="${lang}">${languages[lang]}</option>`);
     }
 }
@@ -396,7 +395,7 @@ function assignRoles(players) {
     let rolesArray = [];
 
     // Assign mafiosi
-    let mafiosoNumber = parseInt($("#mafioso-counter-display").attr("data-value"));
+    const mafiosoNumber = parseInt($("#mafioso-counter-display").attr("data-value"));
     for (let i = 0; i < mafiosoNumber; ++i) {
         rolesArray.push(Roles.MAFIOSO);
     }
@@ -441,9 +440,9 @@ function updateCounters() {
     // Update each counter button
     $(".counter-button").each((index, counterButton) => {
         let display = $(`#${counterButton.getAttribute("data-display")}`);
-        let number = parseInt(display.attr("data-value"));
+        const number = parseInt(display.attr("data-value"));
 
-        let rolesUnassigned = parseInt($("#innocent-counter-display").attr("data-value"));
+        const rolesUnassigned = parseInt($("#innocent-counter-display").attr("data-value"));
 
         if (counterButton.classList.contains("counter-increment-button")) {
             if (rolesUnassigned <= 0) {
@@ -477,7 +476,7 @@ function randomInt(max) {
 
 /** Populate the gameplay area with the appropriate role */
 function populateGameplayArea() {
-    let lcRole = playerRole.toLowerCase();
+    const lcRole = playerRole.toLowerCase();
     $("#role-title-label").html(i18n["role-title-label"]);
     $("#role-title").html(i18n[`${lcRole}-role-title`]);
     // TODO: Populate with the appropriate image
@@ -502,8 +501,8 @@ function populateGameplayArea() {
  */
 function modifyCounter(counterButton, modifier) {
     let display = $(`#${counterButton.getAttribute("data-display")}`);
-    let number = parseInt(display.attr("data-value"));
-    let totalRoles = players.length;
+    const number = parseInt(display.attr("data-value"));
+    const totalRoles = players.length;
     let rolesAssigned = 0;
     $(".counter-display").toArray().forEach(v => {
         rolesAssigned += parseInt(v.getAttribute("data-value"));
@@ -518,7 +517,7 @@ function modifyCounter(counterButton, modifier) {
 
 /** Load the settings from local storage */
 function loadSettings() {
-    let jsonSettings = localStorage.getItem("mafiaSettings");
+    const jsonSettings = localStorage.getItem("mafiaSettings");
     try {
         if (jsonSettings) {
             settings = JSON.parse(jsonSettings);
@@ -557,7 +556,7 @@ function changeTheme(newTheme) {
 // eslint-disable-next-line no-unused-vars
 function showPlayerCard(name) {
     if (name) {
-        let lcRole = gameData.roles[name].toLowerCase();
+        const lcRole = gameData.roles[name].toLowerCase();
         $("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
         $("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
         $("#role-description-player-card").html(i18n[`${lcRole}-role-description`]);
@@ -615,7 +614,7 @@ $("#join-game-button").click(() => {
 });
 
 $("#start-button").click(() => {
-    let gameData = assignRoles(players);
+    const gameData = assignRoles(players);
     changeGameData(gameID, playerName, gameData);
 });
 
