@@ -90,9 +90,9 @@ function joinGame(gameID, playerName) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
         error: (request, status, error) => {
-            debug.log(`Request: request`);
-            debug.log(`Status: status`);
-            debug.log(`Error: error`);
+            debug.log(`Request: ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
             alert(i18n["game-not-found-alert"]);
         },
         success: goToLobby
@@ -104,9 +104,9 @@ function requestGameStateUpdate() {
         type: "POST",
         data: { "gameID": gameID, "type": "REFRESH" },
         error: (request, status, error) => {
-            debug.log(`Request: request`);
-            debug.log(`Status: status`);
-            debug.log(`Error: error`);
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
         },
         success: updateGameState
     });
@@ -117,14 +117,14 @@ function leaveGame(gameID, playerName) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
         error: (request, status, error) => {
-            debug.log(`Request: request`);
-            debug.log(`Status: status`);
-            debug.log(`Error: error`);
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
         },
         success: (data, status, request) => {
-            debug.log(`Data: data`);
-            debug.log(`Status: status`);
-            debug.log(`Request: request`);
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
 
             resetGameDetails();
             isGM = false;
@@ -140,14 +140,14 @@ function setGameActive(gameID, playerName, makeActive) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
         error: (request, status, error) => {
-            debug.log(`Request: request`);
-            debug.log(`Status: status`);
-            debug.log(`Error: error`);
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
         },
         success: (data, status, request) => {
-            debug.log(`Data: data`);
-            debug.log(`Status: status`);
-            debug.log(`Request: request`);
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
             //$(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
@@ -163,14 +163,14 @@ function changeGameData(gameID, playerName, gameData) {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
         error: (request, status, error) => {
-            debug.log(`Request: request`);
-            debug.log(`Status: status`);
-            debug.log(`Error: error`);
+            debug.log(`Request ${request}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Error ${error}`);
         },
         success: (data, status, request) => {
-            debug.log(`Data: data`);
-            debug.log(`Status: status`);
-            debug.log(`Request: request`);
+            debug.log(`Data ${data}`);
+            debug.log(`Status ${status}`);
+            debug.log(`Request ${request}`);
             setGameActive(gameID, playerName, true);
         }
     });
@@ -210,8 +210,8 @@ function calculateRoles() {
  * Main function. It deals with changes in the server DB
  */
 function updateGameState(data, status, request) {
-    debug.log(`Data: data`);
-    debug.log(`Status: status`);
+    debug.log(`Data ${data}`);
+    debug.log(`Status ${status}`);
 
     if (request.status === 200) {
         failedAttempts = 0;
@@ -286,9 +286,9 @@ function updateGameState(data, status, request) {
  * @param {String} request
  */
 function goToLobby(data, status, request) {
-    debug.log(`Data: data`);
-    debug.log(`Status: status`);
-    debug.log(`Request: request`);
+    debug.log(`Data ${data}`);
+    debug.log(`Status ${status}`);
+    debug.log(`Request ${request}`);
 
     if (request.status === 200) {
         if (data === "PLAYER") {
