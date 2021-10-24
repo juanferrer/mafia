@@ -37,16 +37,19 @@ const GameAreaHeights = Object.freeze({
 
 const AnimationTimer = 600;
 
-let gameID = "";
-let playerName = "";
-let isGM = false;
+let game = {
+    gameID: "",
+    playerName: "",
+    isGM: false,
+    players: [],
+    gameData: {},
+    playerRole: ""
+}
+
 const refreshTime = 2000;
 let refreshTimeout;
 let failedAttempts = 0;
 let i18n = {};
-let players = [];
-let gameData = {};
-let playerRole = "";
 
 let settings = {
     languageCode: "en",
@@ -114,7 +117,7 @@ function requestGameStateUpdate() {
     });
 }
 
-function leaveGame(gameID, playerName) {
+function leaveGame(gameID, playerName, isGM) {
     $.ajax(PHPFile, {
         type: "POST",
         data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
@@ -223,7 +226,7 @@ function updateGameState(data, status, request) {
         // let gameData = JSON.parse(json.gameData);
         const newPlayers = json.players;
         const isPlaying = json.isPlaying;
-        gameData = json.gameData;
+        game.gameData = json.gameData;
 
         // Now, do what is needed with the received data
 
@@ -232,14 +235,14 @@ function updateGameState(data, status, request) {
             $("#players-list").html("");
 
             if (newPlayers) {
-                players = newPlayers;
-                players.forEach(p => {
+                game.players = newPlayers;
+                game.players.forEach(p => {
                     $("#players-list").append(`<span>${p}</span>`);
                 });
 
                 // Update the number of innocent players. Innocent display should
                 // be the number of players that have no special role
-                const unassignedRoles = players.length - calculateRoles() - 1;
+                const unassignedRoles = game.players.length - calculateRoles() - 1;
                 $("#innocent-counter-display").attr("data-value", unassignedRoles);
                 updateCounters();
 
@@ -253,9 +256,9 @@ function updateGameState(data, status, request) {
 
             if (isPlaying) {
                 // First, get our role
-                playerRole = gameData.roles[playerName];
+                game.playerRole = game.gameData.roles[game.playerName];
                 // Start the game
-                populateGameplayArea();
+                populateGameplayArea(game.playerRole, game.isGM, game.players);
                 // $(".lobby-area").css("display", "none");
                 $(".lobby-area").css("height", "0");
                 // $(".gameplay-area").css("display", "flex");
@@ -294,15 +297,15 @@ function goToLobby(data, status, request) {
 
     if (request.status === 200) {
         if (data === "PLAYER") {
-            isGM = false;
+            game.isGM = false;
         } else {
             isGM = true;
-            gameID = data;
+            game.gameID = data;
         }
 
-        $("#game-id").html(gameID);
+        $("#game-id").html(game.gameID);
 
-        if (isGM) {
+        if (game.isGM) {
             $("#start-button").css("display", "block");
             $(".settings").css("display", "flex");
         }
@@ -368,8 +371,9 @@ function doI18N(languageCode) {
         $("#join-game-id-input").attr("placeholder", i18n["game-id-placeholder-label"]);
         $("#join-game-player-name-input").attr("placeholder", i18n["name-placeholder-label"]);
 
-        if (playerRole) {
-            const lcRole = playerRole.toLowerCase();
+        // This probably never happens. Need to check, maybe it can be removed
+        if (game.playerRole) {
+            const lcRole = game.playerRole.toLowerCase();
             // Populate the strings for the role too if one is assigned
             $("#role-role-description").html(i18n[`${lcRole}-role-description`]);
             $("#role-description").html(i18n[`${lcRole}-role-description`]);
@@ -387,9 +391,10 @@ function populateLanguageSelect() {
 /**
  * Assign roles to each player and return a gameData object
  * @param {string[]} players
+ * @param {string} playerName
  * @returns {any} gameData
  */
-function assignRoles(players) {
+function assignRoles(players, playerName) {
     let gameData = {
         roles: {}
     };
@@ -476,7 +481,7 @@ function randomInt(max) {
 }
 
 /** Populate the gameplay area with the appropriate role */
-function populateGameplayArea() {
+function populateGameplayArea(playerRole, isGM, players) {
     const lcRole = playerRole.toLowerCase();
     $("#role-title-label").html(i18n["role-title-label"]);
     $("#role-title").html(i18n[`${lcRole}-role-title`]);
@@ -503,7 +508,7 @@ function populateGameplayArea() {
 function modifyCounter(counterButton, modifier) {
     let display = $(`#${counterButton.getAttribute("data-display")}`);
     const number = parseInt(display.attr("data-value"));
-    const totalRoles = players.length;
+    const totalRoles = game.players.length;
     let rolesAssigned = 0;
     $(".counter-display").toArray().forEach(v => {
         rolesAssigned += parseInt(v.getAttribute("data-value"));
@@ -557,7 +562,7 @@ function changeTheme(newTheme) {
 // eslint-disable-next-line no-unused-vars
 function showPlayerCard(name) {
     if (name) {
-        const lcRole = gameData.roles[name].toLowerCase();
+        const lcRole = game.gameData.roles[name].toLowerCase();
         $("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
         $("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
         $("#role-description-player-card").html(i18n[`${lcRole}-role-description`]);
@@ -569,8 +574,8 @@ function showPlayerCard(name) {
  * Reset the details from last game
  */
 function resetGameDetails() {
-    gameID = "";
-    playerName = "";
+    game.gameID = "";
+    game.playerName = "";
 }
 
 // #endregion
@@ -612,19 +617,19 @@ $(".back-button").click(() => {
 });
 
 $("#new-game-button").click(() => {
-    playerName = $("input[name='new-game-player-name'").val();
-    joinGame("", playerName);
+    game.playerName = $("input[name='new-game-player-name'").val();
+    joinGame("", game.playerName);
 });
 
 $("#join-game-button").click(() => {
-    gameID = $("input[name='join-game-id'").val();
-    playerName = $("input[name='join-game-player-name'").val();
-    joinGame(gameID, playerName);
+    game.gameID = $("input[name='join-game-id'").val();
+    game.playerName = $("input[name='join-game-player-name'").val();
+    joinGame(game.gameID, game.playerName);
 });
 
 $("#start-button").click(() => {
-    const gameData = assignRoles(players);
-    changeGameData(gameID, playerName, gameData);
+    game.gameData = assignRoles(game.players, game.playerName);
+    changeGameData(game.gameID, game.playerName, game.gameData);
 });
 
 $("#close-button").click(() => {
@@ -632,7 +637,7 @@ $("#close-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".lobby-area").css("display", "none");
     $(".lobby-area").css("height", "0");
-    leaveGame(gameID, playerName);
+    leaveGame(game.gameID, game.playerName, game.isGM);
 });
 
 $(".counter-increment-button").click((e) => {
@@ -660,11 +665,11 @@ $("#leave-gameplay-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".gameplay-area").css("display", "none");
     $(".gameplay-area").css("height", "0");
-    leaveGame(gameID, playerName);
+    leaveGame(game.gameID, game.playerName, game.isGM);
 });
 
 window.addEventListener("beforeunload", () => {
-    leaveGame(gameID, playerName);
+    leaveGame(game.gameID, game.playerName, game.isGM);
 });
 
 // #endregion
