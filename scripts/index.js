@@ -106,16 +106,16 @@ function calculateRoles() {
 }
 
 function requestGameStateUpdate() {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": game.gameID, "type": "REFRESH" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: updateGameState
-    });
+    fetch(PHPFile, {
+        method: "POST",
+        body: JSON.stringify({ gameID: game.gameID, type: "REFRESH" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        debug.log(`Data: ${data}`);
+        updateGameState(data);
+    })
+    .catch(error => debug.log(error));
 }
 
 /**
@@ -180,10 +180,7 @@ function updateCounters() {
 /**
  * Main function. It deals with changes in the server DB
  */
-function updateGameState(data, status, request) {
-    debug.log(`Data ${data}`);
-    debug.log(`Status ${status}`);
-
+function updateGameState(data) {
     if (request.status === 200) {
         failedAttempts = 0;
 
@@ -256,11 +253,7 @@ function updateGameState(data, status, request) {
  * @param {String} status
  * @param {String} request
  */
-function goToLobby(data, status, request) {
-    debug.log(`Data ${data}`);
-    debug.log(`Status ${status}`);
-    debug.log(`Request ${request}`);
-
+function goToLobby(data) {
     if (request.status === 200) {
         if (data === "PLAYER") {
             game.isGM = false;
@@ -496,80 +489,70 @@ function resetGameDetails() {
  * @param {String} playerName
  */
  function joinGame(gameID, playerName) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
-        error: (request, status, error) => {
-            debug.log(`Request: ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-            alert(i18n["game-not-found-alert"]);
+    fetch(PHPFile, {
+        headers: {
+            "Content-Type": "application/json"
         },
-        success: goToLobby
+        method: "POST",
+        body: JSON.stringify({ gameID: gameID, playerName: playerName, type: "JOIN" }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        debug.log(`Data: ${data}`);
+        goToLobby(data);
+    })
+    .catch(error => {
+        debug.log(`Error: ${error}`);
+        alert(i18n["game-not-found-alert"]);
     });
 }
 
 function leaveGame(gameID, playerName) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
+    fetch(PHPFile, {
+        method: "POST",
+        body: JSON.stringify({ gameID: gameID, playerName: playerName, type: "LEAVE" }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        debug.log(`Data: ${data}`);
 
-            resetGameDetails();
-            failedAttempts = 0;
-            clearTimeout(refreshTimeout);
-            refreshTimeout = undefined;
-        }
-    });
+        resetGameDetails();
+        failedAttempts = 0;
+        clearTimeout(refreshTimeout);
+        refreshTimeout = undefined;
+    })
+    .catch(error => debug.log(`Error ${error}`));
 }
 
 function setGameActive(gameID, playerName, makeActive) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-            //$(".lobby-area").css("display", "none");
-            $(".lobby-area").css("height", "0");
-            // $(".gameplay-area").css("display", "flex");
-            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
-            //clearTimeout(refreshTimeout);
-            //refreshTimeout = undefined;
-        }
-    });
+    fetch(PHPFile, {
+        method: "POST",
+        body: JSON.stringify({ gameID: gameID, playerName: playerName, active: makeActive ? 1 : 0, type: "SETACTIVE" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        debug.log(`Data ${data}`);
+        //$(".lobby-area").css("display", "none");
+        $(".lobby-area").css("height", "0");
+        // $(".gameplay-area").css("display", "flex");
+        setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
+        //clearTimeout(refreshTimeout);
+        //refreshTimeout = undefined;
+    })
+    .catch(error => debug.log(`Error ${error}`));
 }
 
 function changeGameData(gameID, playerName, gameData) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-            setGameActive(gameID, playerName, true);
-        }
-    });
+    fetch(PHPFile,{
+        method: "POST",
+        body: JSON.stringify({ "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        debug.log(`Data ${data}`);
+        setGameActive(gameID, playerName, true)
+    })
+    .catch(error => debug.log(`Error ${error}`));
 }
 
 // #endregion

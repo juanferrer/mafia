@@ -13,6 +13,17 @@ require_once 'cors.php';
 define('SLEEP_TIME', 5);
 
 //region Base logic
+$contentType = isset($_SERVER['CONTENT_TYPE']) ? trim($_SERVER['CONTENT_TYPE']) : '';
+if ($contentType === 'application/json') {
+    $content = trim(file_get_contents('php://input'));
+    $decoded = json_decode($content, true);
+
+    if (!is_array($decoded)) {
+
+    } else {
+
+    }
+}
 
 // Handle no parameters
 if (!isset($_POST['type']) || $_POST['type'] === '') {
@@ -23,21 +34,21 @@ if (!isset($_POST['type']) || $_POST['type'] === '') {
 // Prepare request info
 $requestType = $_POST['type'];
 
-$sessionId = session_id();
-$timestamp = $_SERVER['REQUEST_TIME'];
-$url = $_SERVER['REQUEST_URI'];
-$host = "";
-$path = [];
-$referrer = $_SERVER['HTTP_REFERER'];
-$osFamily = "";
-$osVersion = "";
+// $sessionId = session_id();
+// $timestamp = $_SERVER['REQUEST_TIME'];
+// $url = $_SERVER['REQUEST_URI'];
+// $host = "";
+// $path = [];
+// $referrer = $_SERVER['HTTP_REFERER'];
+// $osFamily = "";
+// $osVersion = "";
 
-// Extract location from IP
-$location = json_decode(file_get_contents("https://geoplugin.net/json.gp?ip=" . $_SERVER['REMOVE_ADDR']));
-$countryISOCode = $location['geoplugin_countryCode'];
-$subdivisionsISOCode = $location['geoplugin_regionCode'];
-$cityName = $location['geoplugin_city'];
-$language = "";
+// // Extract location from IP
+// $location = json_decode(file_get_contents("https://geoplugin.net/json.gp?ip=" . $_SERVER['REMOVE_ADDR']));
+// $countryISOCode = $location['geoplugin_countryCode'];
+// $subdivisionsISOCode = $location['geoplugin_regionCode'];
+// $cityName = $location['geoplugin_city'];
+// $language = "";
 
 switch (strtoupper($requestType)) {
     case 'JOIN':
