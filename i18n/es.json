@@ -105,7 +105,7 @@
         "FLAVOUR TEXT"
     ],
     "suicidal-role-title": "Suicida",
-    "suicidal-role-description": "El <span class='role-name'>Suicida</span> intenta convencer a los <span class='role-name'>Inocentes</span> de que lo linchen. Cuando eso ocurre, el<span class='role-name'>Suicida</span> gana.",
+    "suicidal-role-description": "El <span class='role-name'>Suicida</span> intenta convencer a los otros jugadores de que lo linchen. Cuando eso ocurre, el<span class='role-name'>Suicida</span> gana.",
     "suicidal-role-flavour-text": [
         "FLAVOUR TEXT"
     ],

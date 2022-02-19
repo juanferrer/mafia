@@ -64,23 +64,23 @@
     "jailer-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "vigilante-role-title": "Vigilante",
-    "vigilante-role-description": "The <span class='role-name'>Vigilante</span> wakes up every night and can decide to kill another player.",
+    "vigilante-role-title": "Линчеватель",
+    "vigilante-role-description": "<span class='role-name'>Линчеватель</span> просыпается каждую ночь и может убить выбранного им игрока.",
     "vigilante-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "godfather-role-title": "Godfather",
-    "godfather-role-description": "The <span class='role-name'>Godfather</span> wakes up with the mafia, but appears as an <span class='role-name'>Innocent</span>.",
+    "godfather-role-title": "Крестный отец",
+    "godfather-role-description": "<span class='role-name'>Крёстный отец</span>- просыпается с мафией ,но в игре он прячется за ролью <span class='role-name'>мирного жителя</span>.",
     "godfather-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "medium-role-title": "Medium",
-    "medium-role-description": "The <span class='role-name'>Medium</span> wakes up every night and can decide to communicate with the dead.",
+    "medium-role-title": "Медиум",
+    "medium-role-description": "<span class='role-name'>Медиум</span> просыпается каждую ночь и, по желанию, может общаться с ушедшими.",
     "medium-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "bodyguard-role-title": "Bodyguard",
-    "bodyguard-role-description": "The <span class='role-name'>Bodyguard</span> wakes up during the first night to choose another player. If that player were to die to the mafia, the <span class='role-name'>Bodyguard</span> dies instead.",
+    "bodyguard-role-title": "Телохранитель",
+    "bodyguard-role-description": "<span class='role-name'>Телохранитель</span> просыпается в первую ночь ,что бы выбрать другого игрока под свою опеку. Если его подопечного захотят убить, <span class='role-name'>телохранитель</span> умирает вместо него.",
     "bodyguard-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
@@ -89,28 +89,28 @@
     "cultleader-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "snitch-role-title": "Snitch",
-    "snitch-role-description": "The <span class='role-name'>Snitch</span> wakes up every other night and selects another player. The next morning, the selected player is publicly announced as a <span class='role-name'>Mafioso</span>.",
+    "snitch-role-title": "Доносчик*",
+    "snitch-role-description": "<span class='role-name'>Доносчик</span> просыпается каждую ночь и выбирает другого игрока. На следующие утро выбранный игрок объявляется Мафией не зависимо мафия он или нет.",
     "snitch-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "cupid-role-title": "Cupid",
-    "cupid-role-description": "<span class='role-name'>Cupid</span> wakes up the first night and selects two players to fall in love. These players become connected and if one of them dies, the other one dies of a broken heart.",
+    "cupid-role-title": "Купидон",
+    "cupid-role-description": "<span class='role-name'>Купидон</span> просыпается в первую ночь и выбирает двух влюбленных. Игроки связаны между собой этим чувством и если один игрок умирает, то другой умирает вместе с ним от разбитого сердца.",
     "cupid-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "killer-role-title": "Killer",
-    "killer-role-description": "The <span class='role-name'>Killer</span> wakes up every night to kill another player. The <span class='role-name'>Killer</span> wins when all other players are dead.",
+    "killer-role-title": "Убийца*",
+    "killer-role-description": "<span class='role-name'>Убийца</span> просыпается каждую ночь и может убить другого игрока. <span class='role-name'>Убийца</span> выигрывает когда убивает всех игроков.",
     "killer-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "suicidal-role-title": "Suicidal",
-    "suicidal-role-description": "The <span class='role-name'>Suicidal</span> attempts to convince the <span class='role-name'>Innocents</span> to lynch them. When that happens, the <span class='role-name'>Suicidal</span> wins.",
+    "suicidal-role-title": "Самоубийца",
+    "suicidal-role-description": "<span class='role-name'>Самоубийца</span> должен убедить игроков убить его, в случае успеха он выигрывает игру.",
     "suicidal-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "warveteran-role-title": "War Veteran",
-    "warveteran-role-description": "The <span class='role-name'>War Veteran</span> will survive the first attack of the mafia.",
+    "warveteran-role-title": "Ветеран войны",
+    "warveteran-role-description": "<span class='role-name'>Ветеран войны</span>, если его пытаются убить в первый раз - он выживает.",
     "warveteran-role-flavour-text": [
         "FLAVOUR TEXT"
     ],

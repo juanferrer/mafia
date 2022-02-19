@@ -105,7 +105,7 @@
         "FLAVOUR TEXT"
     ],
     "suicidal-role-title": "Suicidal",
-    "suicidal-role-description": "The <span class='role-name'>Suicidal</span> attempts to convince the <span class='role-name'>Innocents</span> to lynch them. When that happens, the <span class='role-name'>Suicidal</span> wins.",
+    "suicidal-role-description": "The <span class='role-name'>Suicidal</span> attempts to convince other players to lynch them. When that happens, the <span class='role-name'>Suicidal</span> wins.",
     "suicidal-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
