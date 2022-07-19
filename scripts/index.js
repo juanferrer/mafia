@@ -585,7 +585,7 @@ async function deleteGame(gameID, playerName, playerToken) {
         });
 }
 
-function setGameActive(gameID, playerName, playerToken, makeActive) {
+async function setGameActive(gameID, playerName, playerToken, makeActive) {
     const url = `${API}/api/game/${gameID}`;
 
     const response = await fetch(url, {
@@ -615,7 +615,7 @@ function setGameActive(gameID, playerName, playerToken, makeActive) {
         });
 }
 
-function changeGameData(gameID, playerName, playerToken, gameData) {
+async function changeGameData(gameID, playerName, playerToken, gameData) {
     const url = `${API}/api/game/${gameID}`;
 
     const response = await fetch(url, {
