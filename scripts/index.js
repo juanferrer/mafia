@@ -1,6 +1,6 @@
 /* globals $ */
 
-const PHPFile = "https://server.juanferrer.dev/mafia/mafia.php";
+const API = "https://mafiaapi20220317212330.azurewebsites.net";
 
 const Roles = Object.freeze({
     MAFIOSO: "MAFIOSO",
@@ -40,6 +40,7 @@ const AnimationTimer = 600;
 let game = {
     gameID: "",
     playerName: "",
+    playerToken: "",
     isGM: false,
     players: [],
     gameData: {},
@@ -85,37 +86,38 @@ let debug = {
 function calculateRoles() {
     let numberOfRoles = parseInt($("#mafioso-counter-display").attr("data-value"));
 
-    if ($("#detective-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#doctor-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#witness-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#jailer-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#vigilante-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#godfather-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#medium-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#bodyguard-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#cultleader-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#snitch-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#cupid-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#killer-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#suicidal-role-checkbox").is(":checked"))++numberOfRoles;
-    if ($("#warveteran-role-checkbox").is(":checked"))++numberOfRoles;
+    if ($("#detective-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#doctor-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#witness-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#jailer-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#vigilante-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#godfather-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#medium-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#bodyguard-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#cultleader-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#snitch-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#cupid-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#killer-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#suicidal-role-checkbox").is(":checked")) ++numberOfRoles;
+    if ($("#warveteran-role-checkbox").is(":checked")) ++numberOfRoles;
 
     debug.log(numberOfRoles);
 
     return numberOfRoles;
 }
 
-function requestGameStateUpdate() {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": game.gameID, "type": "REFRESH" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-        },
-        success: updateGameState
-    });
+async function requestGameStateUpdate() {
+    const url = `${API}/api/game/${game.gameID}`;
+
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "playerName": game.playerName,
+            "playerToken": game.playerToken
+        }
+    }).then(response => response.json())
+        .then(game => updateGameState(game))
+        .catch(error => error.log(`Error ${error}`));
 }
 
 /**
@@ -123,7 +125,7 @@ function requestGameStateUpdate() {
  * @param {Number} max
  * @returns {Number}
  */
- function randomInt(max) {
+function randomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
@@ -180,9 +182,8 @@ function updateCounters() {
 /**
  * Main function. It deals with changes in the server DB
  */
-function updateGameState(data, status, request) {
+function updateGameState(data) {
     debug.log(`Data ${data}`);
-    debug.log(`Status ${status}`);
 
     if (request.status === 200) {
         failedAttempts = 0;
@@ -252,40 +253,37 @@ function updateGameState(data, status, request) {
 
 /**
  *  Store the gameID, enter lobby and start a repeating update function (recursive timeout)
- * @param {String} data
- * @param {String} status
- * @param {String} request
+ * @param {String} gameCredentials
  */
-function goToLobby(data, status, request) {
-    debug.log(`Data ${data}`);
-    debug.log(`Status ${status}`);
-    debug.log(`Request ${request}`);
+function goToLobby(gameCredentials) {
+    debug.log(`Data ${gameCredentials}`);
 
-    if (request.status === 200) {
-        if (data === "PLAYER") {
-            game.isGM = false;
-        } else {
-            game.isGM = true;
-            game.gameID = data;
-        }
-
-        $("#game-id").html(game.gameID);
-
-        if (game.isGM) {
-            $("#start-button").css("display", "block");
-            $(".settings").css("display", "flex");
-        }
-
-        // $(".new-game-area").css("display", "none");
-        $(".new-game-area").css("height", "0");
-        // $(".join-game-area").css("display", "none");
-        $(".join-game-area").css("height", "0");
-        // $(".lobby-area").css("display", "flex");
-        setTimeout(() => { $(".lobby-area").css("height", GameAreaHeights.LOBBY); }, AnimationTimer);
-
-        // And start update function
-        requestGameStateUpdate();
+    game.gameID = gameCredentials.data.id;
+    if (gameCredentials.data.token !== undefined) {
+        game.isGM = true;
+        game.playerToken = gameCredentials.data.token;
+    } else {
+        game.isGM = false;
+        game.playerToken = gameCredentials.data.gameData.players.filter(player => player.name == game.playerName)[0];
     }
+
+
+    $("#game-id").html(game.gameID);
+
+    if (game.isGM) {
+        $("#start-button").css("display", "block");
+        $(".settings").css("display", "flex");
+    }
+
+    // $(".new-game-area").css("display", "none");
+    $(".new-game-area").css("height", "0");
+    // $(".join-game-area").css("display", "none");
+    $(".join-game-area").css("height", "0");
+    // $(".lobby-area").css("display", "flex");
+    setTimeout(() => { $(".lobby-area").css("height", GameAreaHeights.LOBBY); }, AnimationTimer);
+
+    // And start update function
+    requestGameStateUpdate();
 }
 
 /**
@@ -484,6 +482,9 @@ function resetGameDetails() {
     game.gameID = "";
     game.playerName = "";
     game.isGM = false;
+
+    clearTimeout(refreshTimeout);
+    refreshTimeout = undefined;
 }
 
 // #endregion
@@ -491,85 +492,145 @@ function resetGameDetails() {
 // #region API calls
 
 /**
+ * 
+ * @param {String} playerName 
+ */
+async function createGame(playerName) {
+    const url = `${API}/api/game`;
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "playerName": game.playerName,
+        }
+    }).then(response => response.json())
+        .then(game => goToLobby(game))
+        .catch(error => {
+            error.log(`Error ${error}`)
+            alert(i18n["game-not-found-alert"]);
+        });
+}
+
+/**
  * Start or join a game with the given gameID
  * @param {String} gameID
  * @param {String} playerName
  */
- function joinGame(gameID, playerName) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "JOIN" },
-        error: (request, status, error) => {
-            debug.log(`Request: ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
-            alert(i18n["game-not-found-alert"]);
-        },
-        success: goToLobby
-    });
-}
+async function joinGame(gameID, playerName) {
+    const url = `${API}/api/game/${gameID}`;
 
-function leaveGame(gameID, playerName) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "type": "LEAVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "playerName": playerName,
         },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-
-            resetGameDetails();
-            failedAttempts = 0;
-            clearTimeout(refreshTimeout);
-            refreshTimeout = undefined;
+        body: {
+            "op": "add",
+            "path": "/gameData/players/-",
+            "value": {
+                "name": playerName
+            }
         }
-    });
+    }).then(response => response.json())
+        .then(game => goToLobby(game))
+        .catch(error => {
+            error.log(`Error ${error}`)
+            alert(i18n["game-not-found-alert"]);
+        });
 }
 
-function setGameActive(gameID, playerName, makeActive) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "active": makeActive ? 1 : 0, "type": "SETACTIVE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
+async function leaveGame(gameID, playerName, playerToken, gameData, isGM) {
+
+    if (isGM) {
+        deleteGame(gameID, playerName, playerToken)
+    } else {
+
+        const url = `${API}/api/game/${gameID}`;
+
+        const playerIndex = gameData.players.indexOf(gameData.players.filter(player => player.name == playerName)[0]);
+
+        const response = await fetch(url, {
+            method: "PATCH",
+            headers: {
+                "playerName": playerName,
+                "playerToken": playerToken
+            },
+            body: {
+                "op": "remove",
+                "path": `/gameData/players/${playerIndex}`,
+            }
+        }).then(response => response.json())
+            .then(game => resetGameDetails())
+            .catch(error => {
+                error.log(`Error ${error}`)
+                alert(i18n["game-not-found-alert"]);
+            });
+    }
+}
+
+async function deleteGame(gameID, playerName, playerToken) {
+    const url = `${API}/api/game/${gameID}`;
+
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "playerName": playerName,
+            "playerToken": playerToken
         },
-        success: (data, status, request) => {
+    }).then(response => response.json())
+        .then(game => resetGameDetails())
+        .catch(error => {
+            error.log(`Error ${error}`)
+            alert(i18n["game-not-found-alert"]);
+        });
+}
+
+function setGameActive(gameID, playerName, playerToken, makeActive) {
+    const url = `${API}/api/game/${gameID}`;
+
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "playerName": playerName,
+            "playerToken": playerToken
+        },
+        body: {
+            "op": "replace",
+            "path": `/isPlaying`,
+            "value": makeActive
+        }
+    }).then(response => response.json())
+        .then(data => {
             debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
             //$(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
             setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
             //clearTimeout(refreshTimeout);
-            //refreshTimeout = undefined;
-        }
-    });
+            //refreshTimeout = undefined;    
+        })
+        .catch(error => {
+            error.log(`Error ${error}`)
+            alert(i18n["game-not-found-alert"]);
+        });
 }
 
-function changeGameData(gameID, playerName, gameData) {
-    $.ajax(PHPFile, {
-        type: "POST",
-        data: { "gameID": gameID, "playerName": playerName, "newData": gameData, "type": "CHANGE" },
-        error: (request, status, error) => {
-            debug.log(`Request ${request}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Error ${error}`);
+function changeGameData(gameID, playerName, playerToken, gameData) {
+    const url = `${API}/api/game/${gameID}`;
+
+    const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+            "playerName": playerName,
+            "playerToken": playerToken
         },
-        success: (data, status, request) => {
-            debug.log(`Data ${data}`);
-            debug.log(`Status ${status}`);
-            debug.log(`Request ${request}`);
-            setGameActive(gameID, playerName, true);
-        }
-    });
+        body: gameData
+    }).then(response => response.json())
+        .then(data => setGameActive(gameID, playerName, playerToken, true))
+        .catch(error => {
+            error.log(`Error ${error}`)
+            alert(i18n["game-not-found-alert"]);
+        });
 }
 
 // #endregion
@@ -612,13 +673,13 @@ $(".back-button").click(() => {
 
 $("#new-game-button").click(() => {
     game.playerName = $("input[name='new-game-player-name'").val();
-    joinGame("", game.playerName);
+    await createGame(game.playerName);
 });
 
 $("#join-game-button").click(() => {
     game.gameID = $("input[name='join-game-id'").val();
     game.playerName = $("input[name='join-game-player-name'").val();
-    joinGame(game.gameID, game.playerName);
+    await joinGame(game.gameID, game.playerName);
 });
 
 $("#start-button").click(() => {
@@ -659,11 +720,11 @@ $("#leave-gameplay-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".gameplay-area").css("display", "none");
     $(".gameplay-area").css("height", "0");
-    leaveGame(game.gameID, game.playerName, game.isGM);
+    leaveGame(game.gameID, game.playerName, game.gameData);
 });
 
 window.addEventListener("beforeunload", () => {
-    leaveGame(game.gameID, game.playerName, game.isGM);
+    leaveGame(game.gameID, game.playerName, game.gameData);
 });
 
 // #endregion
