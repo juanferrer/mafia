@@ -501,7 +501,7 @@ async function createGame(playerName) {
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "playerName": game.playerName,
+            "playerName": playerName,
         }
     }).then(response => response.json())
         .then(game => goToLobby(game))
@@ -720,11 +720,11 @@ $("#leave-gameplay-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".gameplay-area").css("display", "none");
     $(".gameplay-area").css("height", "0");
-    leaveGame(game.gameID, game.playerName, game.gameData);
+    leaveGame(game.gameID, game.playerName, game.gameData, game.isGM);
 });
 
 window.addEventListener("beforeunload", () => {
-    leaveGame(game.gameID, game.playerName, game.gameData);
+    leaveGame(game.gameID, game.playerName, game.gameData, game.isGM);
 });
 
 // #endregion
