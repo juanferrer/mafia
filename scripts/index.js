@@ -673,13 +673,13 @@ $(".back-button").click(() => {
 
 $("#new-game-button").click(() => {
     game.playerName = $("input[name='new-game-player-name'").val();
-    await createGame(game.playerName);
+    createGame(game.playerName);
 });
 
 $("#join-game-button").click(() => {
     game.gameID = $("input[name='join-game-id'").val();
     game.playerName = $("input[name='join-game-player-name'").val();
-    await joinGame(game.gameID, game.playerName);
+    joinGame(game.gameID, game.playerName);
 });
 
 $("#start-button").click(() => {
