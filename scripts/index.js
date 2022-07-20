@@ -191,9 +191,9 @@ function updateGameState(data) {
         const json = JSON.parse(data);
 
         // let gameData = JSON.parse(json.gameData);
-        const newPlayers = json.players;
-        const isPlaying = json.isPlaying;
         game.gameData = json.gameData;
+        const newPlayers = game.gameData.players;
+        const isPlaying = game.gameData.isPlaying;
 
         // Now, do what is needed with the received data
 
