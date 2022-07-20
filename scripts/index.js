@@ -506,7 +506,7 @@ async function createGame(playerName) {
     }).then(response => response.text())
         .then(game => goToLobby(game))
         .catch(error => {
-            error.log(`Error ${error}`)
+            console.error(`Error ${error}`)
             alert(i18n["game-not-found-alert"]);
         });
 }
@@ -534,7 +534,7 @@ async function joinGame(gameID, playerName) {
     }).then(response => response.text())
         .then(game => goToLobby(game))
         .catch(error => {
-            error.log(`Error ${error}`)
+            console.error(`Error ${error}`)
             alert(i18n["game-not-found-alert"]);
         });
 }
@@ -562,7 +562,7 @@ async function leaveGame(gameID, playerName, playerToken, gameData, isGM) {
         }).then(response => response.text())
             .then(game => resetGameDetails())
             .catch(error => {
-                error.log(`Error ${error}`)
+                console.error(`Error ${error}`)
                 alert(i18n["game-not-found-alert"]);
             });
     }
@@ -580,7 +580,7 @@ async function deleteGame(gameID, playerName, playerToken) {
     }).then(response => response.text())
         .then(game => resetGameDetails())
         .catch(error => {
-            error.log(`Error ${error}`)
+            console.error(`Error ${error}`)
             alert(i18n["game-not-found-alert"]);
         });
 }
@@ -610,7 +610,7 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
             //refreshTimeout = undefined;    
         })
         .catch(error => {
-            error.log(`Error ${error}`)
+            console.error(`Error ${error}`)
             alert(i18n["game-not-found-alert"]);
         });
 }
@@ -628,7 +628,7 @@ async function changeGameData(gameID, playerName, playerToken, gameData) {
     }).then(response => response.text())
         .then(data => setGameActive(gameID, playerName, playerToken, true))
         .catch(error => {
-            error.log(`Error ${error}`)
+            console.error(`Error ${error}`)
             alert(i18n["game-not-found-alert"]);
         });
 }
