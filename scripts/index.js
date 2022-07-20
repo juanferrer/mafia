@@ -115,7 +115,7 @@ async function requestGameStateUpdate() {
             "playerName": game.playerName,
             "playerToken": game.playerToken
         }
-    }).then(response => response.text())
+    }).then(response => response.json())
         .then(game => updateGameState(game))
         .catch(error => console.error(`Error ${error}`));
 }
@@ -144,7 +144,7 @@ function populateGameplayArea(playerRole, isGM, players) {
     if (isGM) {
         $("#players-list-gameplay-area").html("");
         players.forEach(p => {
-            $("#players-list-gameplay-area").append(`<span onclick="showPlayerCard('${p}')">${p}</span>`);
+            $("#players-list-gameplay-area").append(`<span onclick="showPlayerCard('${p.name}')">${p.name}</span>`);
         });
     }
 }
@@ -183,63 +183,61 @@ function updateCounters() {
  * Main function. It deals with changes in the server DB
  */
 function updateGameState(data) {
-    debug.log(`Data ${data}`);
+    debug.log(data);
 
     //if (request.status === 200) {
-        failedAttempts = 0;
+    failedAttempts = 0;
 
-        const json = JSON.parse(data);
+    // let gameData = JSON.parse(json.gameData);
+    game.gameData = data.data.gameData;
+    const newPlayers = game.gameData.players;
+    const isPlaying = game.gameData.isPlaying;
 
-        // let gameData = JSON.parse(json.gameData);
-        game.gameData = json.gameData;
-        const newPlayers = game.gameData.players;
-        const isPlaying = game.gameData.isPlaying;
+    // Now, do what is needed with the received data
 
-        // Now, do what is needed with the received data
+    if ($("#lobby-area").css("display") !== "none") {
+        // Lobby is visible, we should add the players as soon as we see them
+        $("#players-list").html("");
 
-        if ($("#lobby-area").css("display") !== "none") {
-            // Lobby is visible, we should add the players as soon as we see them
-            $("#players-list").html("");
+        if (newPlayers) {
+            game.players = newPlayers;
+            game.players.forEach(p => {
+                $("#players-list").append(`<span>${p.name}</span>`);
+            });
 
-            if (newPlayers) {
-                game.players = newPlayers;
-                game.players.forEach(p => {
-                    $("#players-list").append(`<span>${p}</span>`);
-                });
+            // Update the number of innocent players. Innocent display should
+            // be the number of players that have no special role
+            const unassignedRoles = game.players.length - calculateRoles() - 1;
+            $("#innocent-counter-display").attr("data-value", unassignedRoles);
+            updateCounters();
 
-                // Update the number of innocent players. Innocent display should
-                // be the number of players that have no special role
-                const unassignedRoles = game.players.length - calculateRoles() - 1;
-                $("#innocent-counter-display").attr("data-value", unassignedRoles);
-                updateCounters();
-
-                if (unassignedRoles < 0) {
-                    $("#start-button").attr("disabled", true);
-                } else {
-                    $("#start-button").removeAttr("disabled");
-                }
+            if (unassignedRoles < 0) {
+                $("#start-button").attr("disabled", true);
+            } else {
+                $("#start-button").removeAttr("disabled");
             }
-
-
-            if (isPlaying) {
-                // First, get our role
-                game.playerRole = game.gameData.roles[game.playerName];
-                // Start the game
-                populateGameplayArea(game.playerRole, game.isGM, game.players);
-                // $(".lobby-area").css("display", "none");
-                $(".lobby-area").css("height", "0");
-                // $(".gameplay-area").css("display", "flex");
-                setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
-                clearTimeout(refreshTimeout);
-                refreshTimeout = undefined;
-                return;
-            }
-        } else if ($(".gameplay-area").css("display") !== "none") {
-            // We're playing, so update the game according to the new data
         }
 
-        // And request update again
-        refreshTimeout = setTimeout(requestGameStateUpdate, refreshTime);
+
+        if (isPlaying) {
+            // First, get our role
+            game.playerRole = game.gameData.roles[game.playerName];
+            // Start the game
+            populateGameplayArea(game.playerRole, game.isGM, game.players);
+            // $(".lobby-area").css("display", "none");
+            $(".lobby-area").css("height", "0");
+            // $(".gameplay-area").css("display", "flex");
+            setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
+            clearTimeout(refreshTimeout);
+            refreshTimeout = undefined;
+            return;
+        }
+    } else if ($(".gameplay-area").css("display") !== "none") {
+        // We're playing, so update the game according to the new data
+    }
+
+    // And request update again
+    refreshTimeout = setTimeout(requestGameStateUpdate, refreshTime);
     /*} else {
         if (failedAttempts < 3) {
             debug.log("Something went wrong. Retrying...");
@@ -256,7 +254,7 @@ function updateGameState(data) {
  * @param {String} gameCredentials
  */
 function goToLobby(gameCredentials) {
-    debug.log(`Data ${gameCredentials}`);
+    debug.log(gameCredentials);
 
     game.gameID = gameCredentials.data.id;
     if (gameCredentials.data.token !== undefined) {
@@ -503,7 +501,7 @@ async function createGame(playerName) {
         headers: {
             "playerName": playerName,
         }
-    }).then(response => response.text())
+    }).then(response => response.json())
         .then(game => goToLobby(game))
         .catch(error => {
             console.error(`Error ${error}`)
@@ -523,6 +521,7 @@ async function joinGame(gameID, playerName) {
         method: "PATCH",
         headers: {
             "playerName": playerName,
+            "playerToken": ""
         },
         body: {
             "op": "add",
@@ -531,7 +530,7 @@ async function joinGame(gameID, playerName) {
                 "name": playerName
             }
         }
-    }).then(response => response.text())
+    }).then(response => response.json())
         .then(game => goToLobby(game))
         .catch(error => {
             console.error(`Error ${error}`)
@@ -601,7 +600,7 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
         }
     }).then(response => response.text())
         .then(data => {
-            debug.log(`Data ${data}`);
+            debug.log(data);
             //$(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
