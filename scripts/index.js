@@ -115,9 +115,9 @@ async function requestGameStateUpdate() {
             "playerName": game.playerName,
             "playerToken": game.playerToken
         }
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(game => updateGameState(game))
-        .catch(error => error.log(`Error ${error}`));
+        .catch(error => console.error(`Error ${error}`));
 }
 
 /**
@@ -185,7 +185,7 @@ function updateCounters() {
 function updateGameState(data) {
     debug.log(`Data ${data}`);
 
-    if (request.status === 200) {
+    //if (request.status === 200) {
         failedAttempts = 0;
 
         const json = JSON.parse(data);
@@ -240,7 +240,7 @@ function updateGameState(data) {
 
         // And request update again
         refreshTimeout = setTimeout(requestGameStateUpdate, refreshTime);
-    } else {
+    /*} else {
         if (failedAttempts < 3) {
             debug.log("Something went wrong. Retrying...");
             setTimeout(requestGameStateUpdate, refreshTime);
@@ -248,7 +248,7 @@ function updateGameState(data) {
         } else {
             debug.error("Server not responding.");
         }
-    }
+    }*/
 }
 
 /**
@@ -503,7 +503,7 @@ async function createGame(playerName) {
         headers: {
             "playerName": playerName,
         }
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(game => goToLobby(game))
         .catch(error => {
             error.log(`Error ${error}`)
@@ -531,7 +531,7 @@ async function joinGame(gameID, playerName) {
                 "name": playerName
             }
         }
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(game => goToLobby(game))
         .catch(error => {
             error.log(`Error ${error}`)
@@ -559,7 +559,7 @@ async function leaveGame(gameID, playerName, playerToken, gameData, isGM) {
                 "op": "remove",
                 "path": `/gameData/players/${playerIndex}`,
             }
-        }).then(response => response.json())
+        }).then(response => response.text())
             .then(game => resetGameDetails())
             .catch(error => {
                 error.log(`Error ${error}`)
@@ -577,7 +577,7 @@ async function deleteGame(gameID, playerName, playerToken) {
             "playerName": playerName,
             "playerToken": playerToken
         },
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(game => resetGameDetails())
         .catch(error => {
             error.log(`Error ${error}`)
@@ -599,7 +599,7 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
             "path": `/isPlaying`,
             "value": makeActive
         }
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(data => {
             debug.log(`Data ${data}`);
             //$(".lobby-area").css("display", "none");
@@ -625,7 +625,7 @@ async function changeGameData(gameID, playerName, playerToken, gameData) {
             "playerToken": playerToken
         },
         body: gameData
-    }).then(response => response.json())
+    }).then(response => response.text())
         .then(data => setGameActive(gameID, playerName, playerToken, true))
         .catch(error => {
             error.log(`Error ${error}`)
