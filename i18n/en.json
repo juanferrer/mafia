@@ -114,5 +114,12 @@
     "warveteran-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "game-not-found-alert": "Unable to find requested game"
+    "game-not-found-error": "Unable to find requested game",
+    "player-not-found-error": "",
+    "unauthorized-access-error": "",
+    "player-already-present-error": "",
+    "missing-header-error": "",
+    "invalid-token-format-error": "",
+    "bad-request-error": "",
+    "server-error": ""
 }

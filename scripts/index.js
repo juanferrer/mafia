@@ -1,6 +1,9 @@
 /* globals $ */
 
-const API = "https://mafiaapi20220317212330.azurewebsites.net";
+const SERVER_API = "https://mafiaapi20220317212330.azurewebsites.net";
+const LOCAL_API = "http://127.0.0.1:7071";
+
+const API = location.hostname === "127.0.0.1" ? LOCAL_API : SERVER_API;
 
 const Roles = Object.freeze({
     MAFIOSO: "MAFIOSO",
@@ -40,11 +43,10 @@ const AnimationTimer = 600;
 let game = {
     gameID: "",
     playerName: "",
+    playerRole: "",
     playerToken: "",
     isGM: false,
-    players: [],
-    gameData: {},
-    playerRole: ""
+    gameData: {}
 }
 
 const refreshTime = 2000;
@@ -117,7 +119,7 @@ async function requestGameStateUpdate() {
         }
     }).then(response => response.json())
         .then(game => updateGameState(game))
-        .catch(error => console.error(`Error ${error}`));
+        .catch(error => console.error(error.data));
 }
 
 /**
@@ -200,14 +202,14 @@ function updateGameState(data) {
         $("#players-list").html("");
 
         if (newPlayers) {
-            game.players = newPlayers;
-            game.players.forEach(p => {
+            game.gameData.players = newPlayers;
+            game.gameData.players.forEach(p => {
                 $("#players-list").append(`<span>${p.name}</span>`);
             });
 
             // Update the number of innocent players. Innocent display should
             // be the number of players that have no special role
-            const unassignedRoles = game.players.length - calculateRoles() - 1;
+            const unassignedRoles = game.gameData.players.length - calculateRoles() - 1;
             $("#innocent-counter-display").attr("data-value", unassignedRoles);
             updateCounters();
 
@@ -223,7 +225,7 @@ function updateGameState(data) {
             // First, get our role
             game.playerRole = game.gameData.roles[game.playerName];
             // Start the game
-            populateGameplayArea(game.playerRole, game.isGM, game.players);
+            populateGameplayArea(game.playerRole, game.isGM, game.gameData.players);
             // $(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
@@ -262,7 +264,7 @@ function goToLobby(gameCredentials) {
         game.playerToken = gameCredentials.data.token;
     } else {
         game.isGM = false;
-        game.playerToken = gameCredentials.data.gameData.players.filter(player => player.name == game.playerName)[0];
+        game.playerToken = gameCredentials.data.gameData.players.filter(player => player.name == game.playerName)[0].token;
     }
 
 
@@ -357,9 +359,6 @@ function populateLanguageSelect() {
  * @returns {any} gameData
  */
 function assignRoles(players, playerName) {
-    let gameData = {
-        roles: {}
-    };
     let rolesArray = [];
 
     // Assign mafiosi
@@ -392,15 +391,16 @@ function assignRoles(players, playerName) {
     rolesArray = shuffle(rolesArray);
     // Before assigning the roles, remove the GM from the players and give them
     // the role directly
-    players.splice(players.indexOf(playerName), 1);
-    gameData.roles[playerName] = "GM";
+    //players.splice(players.indexOf(playerName), 1);
 
     // Now that we have "shuffled the cards", give a role to each player
-    players.forEach((p, i) => {
-        gameData.roles[p] = rolesArray[i];
+    let i = 0;
+    players.forEach(p => {
+        if (p.role !== "GM") {
+            p.role = rolesArray[i];
+            i++
+        }
     });
-
-    return gameData;
 }
 
 /**
@@ -411,7 +411,7 @@ function assignRoles(players, playerName) {
 function modifyCounter(counterButton, modifier) {
     let display = $(`#${counterButton.getAttribute("data-display")}`);
     const number = parseInt(display.attr("data-value"));
-    const totalRoles = game.players.length;
+    const totalRoles = game.gameData.players.length;
     let rolesAssigned = 0;
     $(".counter-display").toArray().forEach(v => {
         rolesAssigned += parseInt(v.getAttribute("data-value"));
@@ -485,6 +485,22 @@ function resetGameDetails() {
     refreshTimeout = undefined;
 }
 
+
+/**
+ * 
+ * @param {Response} response 
+ */
+ async function handleErrors(response) {
+    if (response.ok) {
+        return response.json();
+    } else {
+        await response.json().then(error => {
+            console.error(error.data.message);
+            alert(i18n[error.data.code.toLowerCase().replaceAll("_", "-") + "-error"]);
+        })
+    }
+}
+
 // #endregion
 
 // #region API calls
@@ -501,12 +517,8 @@ async function createGame(playerName) {
         headers: {
             "playerName": playerName,
         }
-    }).then(response => response.json())
-        .then(game => goToLobby(game))
-        .catch(error => {
-            console.error(`Error ${error}`)
-            alert(i18n["game-not-found-alert"]);
-        });
+    }).then(handleErrors)
+        .then(goToLobby);
 }
 
 /**
@@ -517,25 +529,22 @@ async function createGame(playerName) {
 async function joinGame(gameID, playerName) {
     const url = `${API}/api/game/${gameID}`;
 
+    const addOperation = [{
+        "op": "add",
+        "path": "/gameData/players/-",
+        "value": {
+            "name": playerName,
+        }
+    }];
+
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
             "playerName": playerName,
-            "playerToken": ""
         },
-        body: {
-            "op": "add",
-            "path": "/gameData/players/-",
-            "value": {
-                "name": playerName
-            }
-        }
-    }).then(response => response.json())
-        .then(game => goToLobby(game))
-        .catch(error => {
-            console.error(`Error ${error}`)
-            alert(i18n["game-not-found-alert"]);
-        });
+        body: JSON.stringify(addOperation)
+    }).then(handleErrors)
+        .then(goToLobby);
 }
 
 async function leaveGame(gameID, playerName, playerToken, gameData, isGM) {
@@ -548,22 +557,20 @@ async function leaveGame(gameID, playerName, playerToken, gameData, isGM) {
 
         const playerIndex = gameData.players.indexOf(gameData.players.filter(player => player.name == playerName)[0]);
 
+        const removeOperation = [{
+            "op": "remove",
+            "path": `/gameData/players/${playerIndex}`,
+        }];
+
         const response = await fetch(url, {
             method: "PATCH",
             headers: {
                 "playerName": playerName,
                 "playerToken": playerToken
             },
-            body: {
-                "op": "remove",
-                "path": `/gameData/players/${playerIndex}`,
-            }
-        }).then(response => response.text())
-            .then(game => resetGameDetails())
-            .catch(error => {
-                console.error(`Error ${error}`)
-                alert(i18n["game-not-found-alert"]);
-            });
+            body: JSON.stringify(removeOperation)
+        }).then(handleErrors)
+            .then(resetGameDetails)
     }
 }
 
@@ -576,16 +583,18 @@ async function deleteGame(gameID, playerName, playerToken) {
             "playerName": playerName,
             "playerToken": playerToken
         },
-    }).then(response => response.text())
-        .then(game => resetGameDetails())
-        .catch(error => {
-            console.error(`Error ${error}`)
-            alert(i18n["game-not-found-alert"]);
-        });
+    }).then(handleErrors)
+        .then(resetGameDetails);
 }
 
 async function setGameActive(gameID, playerName, playerToken, makeActive) {
     const url = `${API}/api/game/${gameID}`;
+
+    const replaceOperation = [{
+        "op": "replace",
+        "path": `/isPlaying`,
+        "value": makeActive
+    }]
 
     const response = await fetch(url, {
         method: "PATCH",
@@ -593,12 +602,8 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
             "playerName": playerName,
             "playerToken": playerToken
         },
-        body: {
-            "op": "replace",
-            "path": `/isPlaying`,
-            "value": makeActive
-        }
-    }).then(response => response.text())
+        body: JSON.stringify(replaceOperation)
+    }).then(handleErrors)
         .then(data => {
             debug.log(data);
             //$(".lobby-area").css("display", "none");
@@ -607,10 +612,6 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
             setTimeout(() => { $(".gameplay-area").css("height", GameAreaHeights.GAMEPLAY); }, AnimationTimer);
             //clearTimeout(refreshTimeout);
             //refreshTimeout = undefined;    
-        })
-        .catch(error => {
-            console.error(`Error ${error}`)
-            alert(i18n["game-not-found-alert"]);
         });
 }
 
@@ -623,13 +624,9 @@ async function changeGameData(gameID, playerName, playerToken, gameData) {
             "playerName": playerName,
             "playerToken": playerToken
         },
-        body: gameData
-    }).then(response => response.text())
-        .then(data => setGameActive(gameID, playerName, playerToken, true))
-        .catch(error => {
-            console.error(`Error ${error}`)
-            alert(i18n["game-not-found-alert"]);
-        });
+        body: JSON.stringify(gameData)
+    }).then(handleErrors)
+        .then(data => setGameActive(gameID, playerName, playerToken, true));
 }
 
 // #endregion
@@ -682,8 +679,8 @@ $("#join-game-button").click(() => {
 });
 
 $("#start-button").click(() => {
-    game.gameData = assignRoles(game.players, game.playerName);
-    changeGameData(game.gameID, game.playerName, game.gameData);
+    assignRoles(game.gameData.players, game.playerName);
+    changeGameData(game.gameID, game.playerName, game.playerToken, game.gameData);
 });
 
 $("#close-button").click(() => {
@@ -691,7 +688,7 @@ $("#close-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".lobby-area").css("display", "none");
     $(".lobby-area").css("height", "0");
-    leaveGame(game.gameID, game.playerName, game.isGM);
+    leaveGame(game.gameID, game.playerName, game.playerToken, game.gameData, game.isGM);
 });
 
 $(".counter-increment-button").click((e) => {
@@ -719,11 +716,11 @@ $("#leave-gameplay-button").click(() => {
     setTimeout(() => { $(".button-area").css("height", GameAreaHeights.BUTTON); }, AnimationTimer);
     // $(".gameplay-area").css("display", "none");
     $(".gameplay-area").css("height", "0");
-    leaveGame(game.gameID, game.playerName, game.gameData, game.isGM);
+    leaveGame(game.gameID, game.playerName, game.playerToken, game.gameData, game.isGM);
 });
 
 window.addEventListener("beforeunload", () => {
-    leaveGame(game.gameID, game.playerName, game.gameData, game.isGM);
+    leaveGame(game.gameID, game.playerName, game.playerToken, game.gameData, game.isGM);
 });
 
 // #endregion
