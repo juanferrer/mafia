@@ -115,11 +115,11 @@
         "FLAVOUR TEXT"
     ],
     "game-not-found-error": "Unable to find requested game",
-    "player-not-found-error": "",
-    "unauthorized-access-error": "",
-    "player-already-present-error": "",
-    "missing-header-error": "",
-    "invalid-token-format-error": "",
-    "bad-request-error": "",
-    "server-error": ""
+    "player-not-found-error": "Player was not found",
+    "unauthorized-access-error": "Unauthorised access",
+    "player-already-present-error": "The player is already present",
+    "missing-header-error": "Missing header",
+    "invalid-token-format-error": "Token is not in a valid format",
+    "bad-request-error": "Bad request",
+    "server-error": "Server error"
 }

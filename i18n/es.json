@@ -114,5 +114,12 @@
     "warveteran-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "game-not-found-alert": "No se pudo encontrar la partida solicitada"
+    "game-not-found-error": "No se pudo encontrar la partida solicitada",
+    "player-not-found-error": "No se pudo encontrar al jugador",
+    "unauthorized-access-error": "Acceso no autorizado",
+    "player-already-present-error": "El jugador ya existe",
+    "missing-header-error": "Falta una cabecera",
+    "invalid-token-format-error": "Token no es válido",
+    "bad-request-error": "Solicitud malformada",
+    "server-error": "Error en el servidor"
 }

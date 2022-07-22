@@ -114,5 +114,12 @@
     "warveteran-role-flavour-text": [
         "FLAVOUR TEXT"
     ],
-    "game-not-found-alert": "Не удалось найти запрошенное игру"
+    "game-not-found-error": "Не удалось найти запрошенное игру",
+    "player-not-found-error": "Player was not found",
+    "unauthorized-access-error": "Unauthorised access",
+    "player-already-present-error": "The player is already present",
+    "missing-header-error": "Missing header",
+    "invalid-token-format-error": "Token is not in a valid format",
+    "bad-request-error": "Bad request",
+    "server-error": "Server error"
 }
