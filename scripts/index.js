@@ -202,14 +202,13 @@ function updateGameState(data) {
         $("#players-list").html("");
 
         if (newPlayers) {
-            game.gameData.players = newPlayers;
-            game.gameData.players.forEach(p => {
+            newPlayers.forEach(p => {
                 $("#players-list").append(`<span>${p.name}</span>`);
             });
 
             // Update the number of innocent players. Innocent display should
             // be the number of players that have no special role
-            const unassignedRoles = game.gameData.players.length - calculateRoles() - 1;
+            const unassignedRoles = newPlayers.length - calculateRoles() - 1;
             $("#innocent-counter-display").attr("data-value", unassignedRoles);
             updateCounters();
 
@@ -223,9 +222,9 @@ function updateGameState(data) {
 
         if (isPlaying) {
             // First, get our role
-            game.playerRole = game.gameData.roles[game.playerName];
+            game.playerRole = newPlayers.filter(p => p.name === game.playerName)[0].role;
             // Start the game
-            populateGameplayArea(game.playerRole, game.isGM, game.gameData.players);
+            populateGameplayArea(game.playerRole, game.isGM, newPlayers);
             // $(".lobby-area").css("display", "none");
             $(".lobby-area").css("height", "0");
             // $(".gameplay-area").css("display", "flex");
@@ -465,7 +464,7 @@ function changeTheme(newTheme) {
 // eslint-disable-next-line no-unused-vars
 function showPlayerCard(name) {
     if (name) {
-        const lcRole = game.gameData.roles[name].toLowerCase();
+        const lcRole = game.gameData.players.filter(p => p.name === name)[0].role.toLowerCase();
         $("#role-title-label-player-card").html(i18n["role-title-label-player-card"]);
         $("#role-title-player-card").html(i18n[`${lcRole}-role-title`]);
         $("#role-description-player-card").html(i18n[`${lcRole}-role-description`]);
@@ -592,7 +591,7 @@ async function setGameActive(gameID, playerName, playerToken, makeActive) {
 
     const replaceOperation = [{
         "op": "replace",
-        "path": `/isPlaying`,
+        "path": `/gameData/isPlaying`,
         "value": makeActive
     }]
 
